@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
-import { ArrowLeft, CircleAlert, Eye, EyeOff, KeyRound, LoaderCircle, ShieldCheck } from 'lucide-react';
-import { EVENT } from '../config.js';
+import { ArrowLeft, CircleAlert, Eye, EyeOff, KeyRound, LoaderCircle } from 'lucide-react';
+import { EVENT, LOGO_SRC } from '../config.js';
 import { api } from './api.js';
 
 export default function Login({ notice, onSuccess }) {
@@ -35,7 +35,7 @@ export default function Login({ notice, onSuccess }) {
   return (
     <main className="login">
       <div className="login__card card">
-        <span className="login__icon" aria-hidden="true"><ShieldCheck size={30} /></span>
+        <img className="login__logo" src={LOGO_SRC} alt="Logo IPEST" width="240" height="197" />
         <p className="eyebrow">Espace organisateur</p>
         <h1 className="login__title">{EVENT.title}</h1>
         <p className="login__sub">{EVENT.organizer}</p>

@@ -3,7 +3,7 @@ import {
   ArrowUpDown, CalendarCheck, CircleAlert, Download, ExternalLink, Filter, Hourglass, Inbox, Layers, LoaderCircle,
   LogOut, Phone, Printer, RefreshCw, Search, Trash2, Users, X,
 } from 'lucide-react';
-import { DEADLINE_ISO, EVENT } from '../config.js';
+import { DEADLINE_ISO, EVENT, LOGO_SRC } from '../config.js';
 import { useCountdown } from '../lib/useCountdown.js';
 import { api } from './api.js';
 import { SORTS, classKey, formatDateTime, formatTime, groupByClass, matchesSearch, toCsv, tunisDay } from './format.js';
@@ -92,7 +92,7 @@ export default function Dashboard({ onExpired, onLogout }) {
       <header className="site-header admin-header">
         <div className="container site-header__inner">
           <a className="brand" href="/admin/">
-            <span className="brand__mark" aria-hidden="true">IPEST</span>
+            <img className="brand__logo" src={LOGO_SRC} alt="Logo IPEST" width="240" height="197" />
             <span className="brand__text">
               <strong>Espace organisateur</strong>
               <small>{EVENT.title}</small>

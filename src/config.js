@@ -36,4 +36,4 @@ export const CLASS_OPTIONS = [];
 
 // Chemin d'un logo officiel placé dans /public (ex. '/logo-ipest.png').
 // Laisser null pour afficher le monogramme typographique.
-export const LOGO_SRC = null;
+export const LOGO_SRC = '/logo-ipest.png';
