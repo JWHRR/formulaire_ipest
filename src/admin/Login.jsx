@@ -35,7 +35,7 @@ export default function Login({ notice, onSuccess }) {
   return (
     <main className="login">
       <div className="login__card card">
-        <img className="login__logo" src={LOGO_SRC} alt="Logo IPEST" width="240" height="197" />
+        <img className="login__logo" src={LOGO_SRC} alt="Logo IPEST" width="360" height="295" />
         <p className="eyebrow">Espace organisateur</p>
         <h1 className="login__title">{EVENT.title}</h1>
         <p className="login__sub">{EVENT.organizer}</p>

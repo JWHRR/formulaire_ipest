@@ -92,7 +92,7 @@ export default function Dashboard({ onExpired, onLogout }) {
       <header className="site-header admin-header">
         <div className="container site-header__inner">
           <a className="brand" href="/admin/">
-            <img className="brand__logo" src={LOGO_SRC} alt="Logo IPEST" width="240" height="197" />
+            <img className="brand__logo" src={LOGO_SRC} alt="Logo IPEST" width="360" height="295" />
             <span className="brand__text">
               <strong>Espace organisateur</strong>
               <small>{EVENT.title}</small>
