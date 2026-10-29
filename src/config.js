@@ -1,33 +1,38 @@
 // Toutes les informations de l'événement sont centralisées ici.
-// Elles reprennent exactement l'affiche officielle de la sortie.
+// Elles reprennent exactement l'affiche officielle de l'événement.
 // Module pur : également importé par l'API (dossier api/).
 
 export const EVENT = {
   organizer: 'Service Socio-Culturel de l’IPEST',
   institution: 'Institut Préparatoire aux Études Scientifiques et Techniques',
   institutionShort: 'IPEST',
-  title: 'Dougga & Testour',
-  slogan: 'Sur les traces de notre patrimoine',
-  dateLabel: 'Jeudi 15 octobre 2026',
-  departure: '08:00 — Départ de Tunis',
+  title: 'Journée Porte Ouverte Padel',
+  kicker: 'Journée porte ouverte',
+  sport: 'Padel',
+  slogan: 'Plus qu’un jeu, un style de vie !',
+  tagline: 'Découvrez votre nouvelle passion !',
+  audience: 'Étudiants des établissements de l’Université de Carthage',
+  dateLabel: 'Mercredi 4 novembre 2026',
+  timeLabel: 'À partir de 12h – 15h',
+  venue: 'Padelite Tunisia – Lac 3',
+  coach: 'Madame Sonia Azzouz',
 };
 
-// Clôture des inscriptions : lundi 12 octobre 2026 à minuit (heure de Tunis, UTC+1).
-// « Minuit le 12 » = fin de la journée du 12, soit le 13 octobre à 00:00.
-// Appliquée à la fois sur le site et par l'API.
-export const DEADLINE_ISO = '2026-10-13T00:00:00+01:00';
-export const DEADLINE_LABEL = 'Lundi 12 octobre 2026 à minuit';
-
-export const PROGRAM = [
-  { time: '08:00', label: 'Départ de Tunis', icon: 'bus' },
-  { time: '10:00', label: 'Visite du site archéologique de Dougga', icon: 'landmark' },
-  { time: '11:00', label: 'Expérience 3D Dougga', icon: 'rotate3d' },
-  { time: '12:00', label: 'Départ vers Testour', icon: 'route' },
-  { time: '13:00', label: 'Déjeuner et temps libre', icon: 'utensils' },
-  { time: '14:00', label: 'Visite de Testour', icon: 'mapPin' },
-  { time: '16:00', label: 'Visite Ain Thunga', icon: 'footprints' },
-  { time: '17:00', label: 'Départ vers Tunis', icon: 'busFront' },
+export const PERKS = [
+  { icon: 'racket', label: 'Raquettes fournies' },
+  { icon: 'ticket', label: 'Entrée gratuite' },
+  { icon: 'party', label: 'Ambiance festive' },
+  { icon: 'music', label: 'DJ Set' },
 ];
+
+// Affiche officielle (dans /public).
+export const POSTER_SRC = '/affiche-padel.jpg';
+
+// Clôture des inscriptions : lundi 2 novembre 2026 à minuit (heure de Tunis, UTC+1).
+// « Minuit le 2 » = fin de la journée du 2, soit le 3 novembre à 00:00.
+// Appliquée à la fois sur le site et par l'API.
+export const DEADLINE_ISO = '2026-11-03T00:00:00+01:00';
+export const DEADLINE_LABEL = 'Lundi 2 novembre 2026 à minuit';
 
 // Liste des classes proposées dans un menu déroulant.
 // Vide : le champ « Classe » est une saisie libre.

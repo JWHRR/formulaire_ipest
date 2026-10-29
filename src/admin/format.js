@@ -36,7 +36,7 @@ export function matchesSearch(r, q) {
   const query = fold(q).trim();
   if (!query) return true;
   const digits = query.replace(/\D/g, '');
-  const hay = fold(`${r.nom} ${r.prenom} ${r.prenom} ${r.nom} ${r.classe} ${r.telephone}`);
+  const hay = fold(`${r.nom} ${r.prenom} ${r.prenom} ${r.nom} ${r.classe} ${r.telephone} ${r.chambre ?? ''}`);
   if (query.split(/\s+/).every((word) => hay.includes(word))) return true;
   return digits.length >= 3 && r.telephone.replace(/\D/g, '').includes(digits);
 }
@@ -58,9 +58,9 @@ const text = (v) => quote(/^[=+\-@\t\r]/.test(String(v ?? '')) ? `'${v}` : Strin
 const phone = (v) => quote(`="${String(v).replace(/[^+\d ]/g, '')}"`);
 
 export function toCsv(rows) {
-  const header = ['N°', 'Nom', 'Prénom', 'Téléphone', 'Classe', 'Date d’inscription'];
+  const header = ['N°', 'Nom', 'Prénom', 'Téléphone', 'Classe', 'Chambre (foyer)', 'Date d’inscription'];
   const lines = rows.map((r) =>
-    [String(r.rank), text(r.nom), text(r.prenom), phone(r.telephone), text(r.classe), formatDateTime(r.createdAt)].join(';'),
+    [String(r.rank), text(r.nom), text(r.prenom), phone(r.telephone), text(r.classe), text(r.chambre || 'Hors foyer'), formatDateTime(r.createdAt)].join(';'),
   );
   return '\uFEFF' + [header.join(';'), ...lines].join('\r\n') + '\r\n';
 }

@@ -4,7 +4,7 @@ import {
   OTHER_CLASS, buildPayload, formatNom, formatPrenom, normalizeTunisianPhone, sanitizeRegistration, validateRegistration,
 } from '../src/lib/validation.js';
 
-const valid = { nom: 'Ben Salah', prenom: 'Amine', telephone: '22 123 456', classe: 'Ma classe', classeAutre: '', website: '', withSelect: false };
+const valid = { nom: 'Ben Salah', prenom: 'Amine', telephone: '22 123 456', classe: 'Ma classe', classeAutre: '', chambre: 'b12', horsFoyer: false, website: '', withSelect: false };
 
 test('numéros tunisiens acceptés et normalisés', () => {
   for (const n of ['22123456', '+21622123456', '+216 22 123 456', '0021622123456', '216-22-123-456', '(+216) 98.765.432', '71 123 456']) {
@@ -23,9 +23,15 @@ test('formulaire valide : aucune erreur', () => {
   assert.deepEqual(validateRegistration(valid), {});
 });
 
-test('les 4 champs sont obligatoires', () => {
-  const e = validateRegistration({ ...valid, nom: ' ', prenom: '', telephone: '', classe: '' });
-  assert.deepEqual(Object.keys(e).sort(), ['classe', 'nom', 'prenom', 'telephone']);
+test('tous les champs sont obligatoires', () => {
+  const e = validateRegistration({ ...valid, nom: ' ', prenom: '', telephone: '', classe: '', chambre: '' });
+  assert.deepEqual(Object.keys(e).sort(), ['chambre', 'classe', 'nom', 'prenom', 'telephone']);
+});
+
+test('chambre : facultative seulement hors foyer, format contrôlé', () => {
+  assert.equal(validateRegistration({ ...valid, chambre: '', horsFoyer: true }).chambre, undefined);
+  for (const chambre of ['B12', '104', 'A-3', 'Bloc B 12']) assert.equal(validateRegistration({ ...valid, chambre }).chambre, undefined, chambre);
+  for (const chambre of ['=1+1', '<b>', 'x'.repeat(13)]) assert.ok(validateRegistration({ ...valid, chambre }).chambre, chambre);
 });
 
 test('noms : lettres (y compris arabes et accentuées), tirets, apostrophes', () => {
@@ -52,8 +58,9 @@ test('mise en forme des noms', () => {
 
 test('payload et assainissement serveur', () => {
   const p = buildPayload({ ...valid, nom: '  ben  salah ' });
-  assert.deepEqual(p, { nom: 'ben salah', prenom: 'Amine', telephone: '22 123 456', classe: 'Ma classe', website: '' });
-  assert.deepEqual(sanitizeRegistration(p).data, { nom: 'BEN SALAH', prenom: 'Amine', telephone: '+216 22 123 456', classe: 'MA CLASSE' });
+  assert.deepEqual(p, { nom: 'ben salah', prenom: 'Amine', telephone: '22 123 456', classe: 'Ma classe', chambre: 'b12', horsFoyer: false, website: '' });
+  assert.deepEqual(sanitizeRegistration(p).data, { nom: 'BEN SALAH', prenom: 'Amine', telephone: '+216 22 123 456', classe: 'MA CLASSE', chambre: 'B12' });
+  assert.equal(sanitizeRegistration({ ...p, chambre: 'Z9', horsFoyer: true }).data.chambre, null);
   assert.ok(sanitizeRegistration({ nom: 1, prenom: null }).errors.nom);
   assert.ok(sanitizeRegistration(null).errors);
 });

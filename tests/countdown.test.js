@@ -2,10 +2,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { timeRemaining } from '../src/lib/countdown.js';
 
-const DEADLINE = new Date('2026-10-13T00:00:00+01:00').getTime();
+const DEADLINE = new Date('2026-11-03T00:00:00+01:00').getTime();
 
-test('date limite = 12 octobre 2026 minuit, heure de Tunis', () => {
-  assert.equal(new Date(DEADLINE).toISOString(), '2026-10-12T23:00:00.000Z');
+test('date limite = 2 novembre 2026 minuit, heure de Tunis (config)', async () => {
+  const { DEADLINE_ISO } = await import('../src/config.js');
+  assert.equal(new Date(DEADLINE_ISO).toISOString(), '2026-11-02T23:00:00.000Z');
+  assert.equal(new Date(DEADLINE).toISOString(), '2026-11-02T23:00:00.000Z');
 });
 
 test('décomposition jours / heures / minutes / secondes', () => {

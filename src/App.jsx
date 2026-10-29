@@ -1,7 +1,6 @@
 import Header from './components/Header.jsx';
 import Hero from './components/Hero.jsx';
-import Intro from './components/Intro.jsx';
-import Program from './components/Program.jsx';
+import Infos from './components/Infos.jsx';
 import Registration from './components/Registration.jsx';
 import Footer from './components/Footer.jsx';
 import { DEADLINE_ISO } from './config.js';
@@ -16,8 +15,7 @@ export default function App() {
       <Header />
       <main>
         <Hero countdown={countdown} />
-        <Intro />
-        <Program />
+        <Infos />
         <Registration countdown={countdown} />
       </main>
       <Footer />

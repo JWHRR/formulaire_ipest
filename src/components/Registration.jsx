@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import {
-  CircleAlert, CircleCheckBig, GraduationCap, IdCard, LoaderCircle, Lock, Phone, RefreshCw, Send, User,
+  BedDouble, CircleAlert, CircleCheckBig, GraduationCap, IdCard, LoaderCircle, Lock, Phone, RefreshCw, Send, User,
 } from 'lucide-react';
 import { CLASS_OPTIONS, EVENT } from '../config.js';
 import { OTHER_CLASS, buildPayload, normalizeTunisianPhone, validateRegistration } from '../lib/validation.js';
@@ -10,8 +10,11 @@ import Field from './Field.jsx';
 import Reveal from './Reveal.jsx';
 
 const WITH_SELECT = CLASS_OPTIONS.length > 0;
-const EMPTY = { nom: '', prenom: '', telephone: '', classe: '', classeAutre: '', website: '', withSelect: WITH_SELECT };
-const FIELD_ORDER = ['nom', 'prenom', 'telephone', 'classe', 'classeAutre'];
+const EMPTY = {
+  nom: '', prenom: '', telephone: '', classe: '', classeAutre: '', chambre: '', horsFoyer: false,
+  website: '', withSelect: WITH_SELECT,
+};
+const FIELD_ORDER = ['nom', 'prenom', 'telephone', 'classe', 'classeAutre', 'chambre'];
 
 export default function Registration({ countdown }) {
   const [values, setValues] = useState(EMPTY);
@@ -24,8 +27,12 @@ export default function Registration({ countdown }) {
   const successRef = useRef(null);
 
   const update = (name) => (e) => {
-    const next = { ...values, [name]: e.target.value };
+    const next = { ...values, [name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value };
     setValues(next);
+    if (name === 'horsFoyer') {
+      setErrors((prev) => ({ ...prev, chambre: next.horsFoyer ? undefined : touched.chambre ? validateRegistration(next).chambre : undefined }));
+      return;
+    }
     if (touched[name] || errors[name]) {
       const all = validateRegistration(next);
       setErrors((prev) => ({ ...prev, [name]: all[name], ...(name === 'classe' ? { classeAutre: undefined } : {}) }));
@@ -98,12 +105,12 @@ export default function Registration({ countdown }) {
           <p className="eyebrow eyebrow--light">Inscription</p>
           <h2 id="registration-title" className="section__title section__title--light">Réservez votre place</h2>
           <p className="registration__lead">
-            Quatre informations suffisent pour vous inscrire à la sortie {EVENT.title} du {EVENT.dateLabel.toLowerCase()}.
+            Quelques informations suffisent pour réserver votre place à la {EVENT.title} du {EVENT.dateLabel.toLowerCase()}.
           </p>
-          <Countdown countdown={countdown} variant="dark" />
+          <Countdown countdown={countdown} />
           <p className="registration__note">
             Tous les champs sont obligatoires. Vos informations sont utilisées uniquement par le Service
-            Socio-Culturel pour l’organisation de cette sortie.
+            Socio-Culturel pour l’organisation de cette journée.
           </p>
         </Reveal>
 
@@ -113,8 +120,8 @@ export default function Registration({ countdown }) {
               <span className="success__icon" aria-hidden="true"><CircleCheckBig size={40} /></span>
               <h3>Inscription enregistrée !</h3>
               <p>
-                Merci pour votre intérêt pour la sortie culturelle Dougga &amp; Testour organisée par le Service
-                Socio-Culturel de l’IPEST. Votre réponse a bien été prise en compte.
+                Merci pour votre inscription à la {EVENT.title}. Votre réponse a bien été prise en compte.
+                Rendez-vous le {EVENT.dateLabel.toLowerCase()} à {EVENT.venue} !
               </p>
               <button type="button" className="btn btn--ghost" onClick={reset}>Inscrire une autre personne</button>
             </div>
@@ -122,13 +129,13 @@ export default function Registration({ countdown }) {
             <div className="closed">
               <span className="closed__icon" aria-hidden="true"><Lock size={32} /></span>
               <h3>Inscriptions closes</h3>
-              <p>La période d’inscription à la sortie {EVENT.title} est terminée. Merci de votre intérêt.</p>
+              <p>La période d’inscription à la {EVENT.title} est terminée. Merci de votre intérêt.</p>
             </div>
           ) : (
             <form ref={formRef} className="form" onSubmit={handleSubmit} noValidate aria-busy={submitting}>
               <div className="form__header">
                 <h3>Formulaire d’inscription</h3>
-                <p>Sortie {EVENT.title} — {EVENT.dateLabel}</p>
+                <p>{EVENT.title} — {EVENT.dateLabel}</p>
               </div>
 
               <div className="form__row">
@@ -183,6 +190,24 @@ export default function Registration({ countdown }) {
                   )}
                 </Field>
               )}
+
+              <div className="room">
+                <Field
+                  id="chambre" label="Numéro de chambre (foyer)" required={!values.horsFoyer} icon={BedDouble}
+                  hint={values.horsFoyer ? 'Non concerné : vous n’êtes pas logé(e) au foyer.' : 'Ex. : B12, 104…'}
+                  error={!values.horsFoyer && err('chambre')}
+                >
+                  {(a11y) => (
+                    <input {...common('chambre')} {...a11y} type="text" autoCapitalize="characters" autoComplete="off"
+                      maxLength={12} placeholder={values.horsFoyer ? '—' : 'Votre chambre'} enterKeyHint="send"
+                      disabled={submitting || values.horsFoyer} value={values.horsFoyer ? '' : values.chambre} />
+                  )}
+                </Field>
+                <label className="check">
+                  <input type="checkbox" name="horsFoyer" checked={values.horsFoyer} onChange={update('horsFoyer')} disabled={submitting} />
+                  <span>Je ne suis pas logé(e) au foyer</span>
+                </label>
+              </div>
 
               {/* Champ piège anti-robot, invisible pour les utilisateurs */}
               <div className="hp" aria-hidden="true">

@@ -1,8 +1,8 @@
-# IPEST — Inscription à la sortie Dougga & Testour
+# IPEST — Inscription à la Journée Porte Ouverte Padel
 
-Site d'inscription à la sortie culturelle du **jeudi 15 octobre 2026**, organisé par le Service Socio-Culturel de l'IPEST, avec un **espace organisateur** (`/admin`) protégé par mot de passe.
+Site d'inscription des étudiants de l'IPEST à la **Journée Porte Ouverte Padel** du **mercredi 4 novembre 2026** (à partir de 12h – 15h, Padelite Tunisia – Lac 3), géré par le Service Socio-Culturel, avec un **espace organisateur** (`/admin`) protégé par mot de passe.
 
-Les inscriptions ferment le **lundi 12 octobre 2026 à minuit** (heure de Tunis). Un compte à rebours est affiché sur le site. Après l'échéance, le formulaire se ferme, et le serveur refuse lui aussi toute nouvelle inscription.
+Les inscriptions ferment le **lundi 2 novembre 2026 à minuit** (heure de Tunis). Un compte à rebours est affiché sur le site. Après l'échéance, le formulaire se ferme, et le serveur refuse lui aussi toute nouvelle inscription.
 
 ```
 Étudiant ─▶ site (React) ─▶ /api/register (fonction Vercel) ─▶ base PostgreSQL (Neon)
@@ -11,24 +11,24 @@ Organisateur ─▶ /admin ─▶ /api/admin/* (session sécurisée) ─▶ mêm
 
 ## Fonctionnalités
 
-**Formulaire public.** Quatre champs, tous obligatoires : Nom, Prénom, Numéro de téléphone et Classe.
+**Formulaire public.** Champs obligatoires : Nom, Prénom, Numéro de téléphone, Classe et **Numéro de chambre (foyer)**. Un étudiant non logé au foyer coche « Je ne suis pas logé(e) au foyer » à la place du numéro de chambre.
 
 - Les erreurs s'affichent en français, à la fois sur le téléphone et côté serveur.
 - Les numéros tunisiens sont acceptés avec ou sans `+216`, puis enregistrés au format `+216 XX XXX XXX`.
 - Un même numéro ne peut pas être inscrit deux fois.
-- Les données sont mises en forme automatiquement : NOM en majuscules, Prénom avec une majuscule initiale, CLASSE en majuscules.
+- Les données sont mises en forme automatiquement : NOM, CLASSE et CHAMBRE en majuscules, Prénom avec une majuscule initiale.
 - Le message de succès ne s'affiche **qu'après** l'enregistrement effectif en base.
 - Un champ piège invisible bloque les robots.
 
 **Espace organisateur (`/admin`).**
 
-- Chiffres clés : nombre d'inscrits, inscriptions du jour, nombre de classes, temps restant avant la clôture.
+- Chiffres clés : nombre d'inscrits, inscriptions du jour, nombre d'inscrits logés au foyer, temps restant avant la clôture.
 - Répartition par classe. Touchez une classe pour filtrer la liste.
-- Recherche par nom, prénom, téléphone ou classe, sans tenir compte des accents.
+- Recherche par nom, prénom, téléphone, classe ou chambre, sans tenir compte des accents.
 - Tri : plus récentes, plus anciennes, par nom ou par classe.
 - Sur téléphone, les inscriptions s'affichent en cartes avec un bouton d'appel direct. Sur ordinateur, elles s'affichent en tableau.
 - **Export Excel** (CSV compatible Excel et Google Sheets) de la liste affichée.
-- **Impression** d'une liste d'appel alphabétique avec une colonne « Présent », pratique dans le bus. Elle tient compte du filtre de classe.
+- **Impression** d'une liste d'appel alphabétique (avec la chambre) et une colonne « Présent ». Elle tient compte du filtre de classe.
 - Suppression d'une inscription, avec confirmation.
 - Actualisation automatique toutes les 30 secondes.
 
@@ -82,6 +82,8 @@ npm run build
 En local, laissez `DATABASE_URL` vide : une base PostgreSQL embarquée (PGlite) est créée dans `.data/`. Elle n'est jamais publiée. Supprimez ce dossier pour repartir de zéro.
 
 ## 3. Maintenance
+
+Les inscriptions de l'ancien événement (sortie Dougga & Testour, table `registrations`) sont **supprimées définitivement** au premier démarrage de cette version. Les inscriptions au padel sont enregistrées dans une nouvelle table, `padel_registrations`.
 
 | Besoin | Où |
 |---|---|

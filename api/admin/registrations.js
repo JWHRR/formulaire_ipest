@@ -1,7 +1,7 @@
 // GET    /api/admin/registrations         — liste des inscriptions
 // DELETE /api/admin/registrations?id=123  — supprime une inscription
 import { requireAdmin } from '../../server/auth.js';
-import { query } from '../../server/db.js';
+import { TABLE, query } from '../../server/db.js';
 import { queryParams, route, send } from '../../server/http.js';
 
 export default route(['GET', 'DELETE'], async (req, res) => {
@@ -10,13 +10,13 @@ export default route(['GET', 'DELETE'], async (req, res) => {
   if (req.method === 'DELETE') {
     const id = Number(queryParams(req).get('id'));
     if (!Number.isInteger(id) || id <= 0) return send(res, 400, { ok: false, code: 'bad_request', error: 'Identifiant invalide.' });
-    const rows = await query('DELETE FROM registrations WHERE id = $1 RETURNING id', [id]);
+    const rows = await query(`DELETE FROM ${TABLE} WHERE id = $1 RETURNING id`, [id]);
     if (!rows.length) return send(res, 404, { ok: false, code: 'not_found', error: 'Cette inscription n\u2019existe plus.' });
     return send(res, 200, { ok: true });
   }
 
   const rows = await query(
-    'SELECT id, nom, prenom, telephone, classe, created_at FROM registrations ORDER BY created_at ASC, id ASC',
+    `SELECT id, nom, prenom, telephone, classe, chambre, created_at FROM ${TABLE} ORDER BY created_at ASC, id ASC`,
   );
   const registrations = rows.map((r) => ({
     id: r.id,
@@ -24,6 +24,7 @@ export default route(['GET', 'DELETE'], async (req, res) => {
     prenom: r.prenom,
     telephone: r.telephone,
     classe: r.classe,
+    chambre: r.chambre,
     createdAt: new Date(r.created_at).toISOString(),
   }));
   return send(res, 200, { ok: true, registrations, serverTime: new Date().toISOString() });

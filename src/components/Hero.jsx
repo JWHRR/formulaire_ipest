@@ -1,59 +1,62 @@
-import { ArrowDown, CalendarDays, Clock, Sparkles } from 'lucide-react';
+import { ArrowDown, CalendarDays, Clock, GraduationCap, MapPin } from 'lucide-react';
 import { EVENT } from '../config.js';
 import Countdown from './Countdown.jsx';
-import TempleSilhouette from './TempleSilhouette.jsx';
+import { Ball, Court, Racket } from './PadelArt.jsx';
+
+export function scrollToForm(e) {
+  e?.preventDefault();
+  const target = document.getElementById('inscription');
+  if (!target) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  history.replaceState(null, '', '#inscription');
+  // place le focus sur le premier champ pour la navigation clavier
+  setTimeout(() => document.getElementById('nom')?.focus({ preventScroll: true }), reduce ? 0 : 650);
+}
 
 export default function Hero({ countdown }) {
-  const scrollToForm = (e) => {
-    e.preventDefault();
-    const target = document.getElementById('inscription');
-    if (!target) return;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-    history.replaceState(null, '', '#inscription');
-    // place le focus sur le premier champ pour la navigation clavier
-    setTimeout(() => document.getElementById('nom')?.focus({ preventScroll: true }), reduce ? 0 : 650);
-  };
-
   return (
     <section className="hero" id="top" aria-labelledby="hero-title">
-      <div className="hero__sky" aria-hidden="true">
-        <span className="cloud cloud--1" />
-        <span className="cloud cloud--2" />
-        <span className="cloud cloud--3" />
-        <span className="sun" />
+      <Court className="hero__court" />
+      <span className="hero__glow" aria-hidden="true" />
+
+      <div className="container hero__grid">
+        <div className="hero__content">
+          <p className="hero__audience">
+            <GraduationCap size={18} aria-hidden="true" /> {EVENT.audience}
+          </p>
+
+          <h1 id="hero-title" className="hero__title">
+            <span className="hero__kicker">{EVENT.kicker}</span>
+            <span className="hero__sport">{EVENT.sport}</span>
+          </h1>
+
+          <p className="slash-banner"><span>“{EVENT.slogan}”</span></p>
+
+          <ul className="hero__meta" aria-label="Informations pratiques">
+            <li><CalendarDays size={18} aria-hidden="true" /> {EVENT.dateLabel}</li>
+            <li><Clock size={18} aria-hidden="true" /> {EVENT.timeLabel}</li>
+            <li><MapPin size={18} aria-hidden="true" /> {EVENT.venue}</li>
+          </ul>
+
+          <div className="hero__actions">
+            <a className="btn btn--primary btn--large" href="#inscription" onClick={scrollToForm}>
+              Je m’inscris <ArrowDown size={18} aria-hidden="true" />
+            </a>
+            <a className="btn btn--outline btn--large" href="#infos">Voir les infos</a>
+          </div>
+
+          <div className="hero__countdown">
+            <Countdown countdown={countdown} />
+          </div>
+        </div>
+
+        <div className="hero__art" aria-hidden="true">
+          <span className="hero__ring" />
+          <Racket className="hero__racket" />
+          <Ball className="hero__ball" />
+        </div>
       </div>
-
-      <div className="container hero__content">
-        <span className="badge badge--gold hero__badge">
-          <Sparkles size={14} aria-hidden="true" /> Sortie culturelle
-        </span>
-        <h1 id="hero-title" className="hero__title">
-          Découvrez <span className="hero__title-accent">{EVENT.title}</span>
-        </h1>
-        <p className="hero__subtitle">{EVENT.slogan}</p>
-
-        <div className="hero__meta">
-          <span className="chip">
-            <CalendarDays size={16} aria-hidden="true" /> {EVENT.dateLabel}
-          </span>
-          <span className="chip">
-            <Clock size={16} aria-hidden="true" /> {EVENT.departure}
-          </span>
-        </div>
-
-        <div className="hero__actions">
-          <a className="btn btn--primary btn--large" href="#inscription" onClick={scrollToForm}>
-            S’inscrire à la sortie <ArrowDown size={18} aria-hidden="true" />
-          </a>
-        </div>
-
-        <div className="hero__countdown">
-          <Countdown countdown={countdown} variant="glass" />
-        </div>
-      </div>
-
-      <TempleSilhouette className="hero__temple" />
     </section>
   );
 }

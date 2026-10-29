@@ -17,7 +17,8 @@
   padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
   background:
     radial-gradient(900px 400px at 80% -10%, rgba(255, 255, 255, 0.6), transparent 60%),
-    linear-gradient(180deg, #6fbdf2 0%, #b4e0fb 55%, #eef8ff 100%);
+    radial-gradient(700px 400px at 0% 100%, rgba(242, 107, 29, 0.3), transparent 60%),
+    linear-gradient(165deg, #050f33 0%, #0b1f66 55%, #1440b0 100%);
 }
 .login__card { width: 100%; max-width: 420px; padding: 34px 24px 26px; text-align: center; box-shadow: var(--shadow-lg); }
 .login__logo { height: 130px; width: auto; margin: 0 auto 16px; }
@@ -141,6 +142,10 @@
 .muted { color: var(--muted); font-size: 0.9em; }
 .phone { color: var(--navy-700); font-weight: 500; text-decoration: none; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .phone:hover { text-decoration: underline; }
+.room-tag {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px;
+  background: var(--gold-100); color: var(--orange-700); font-weight: 700; font-size: 0.85rem; white-space: nowrap;
+}
 .class-tag {
   display: inline-block; padding: 3px 10px; border-radius: 999px;
   background: var(--sky-100); color: var(--navy-800); font-weight: 600; font-size: 0.85rem; white-space: nowrap;

@@ -1,12 +1,12 @@
 // POST /api/register — enregistre une inscription.
-import { DEADLINE_ISO } from '../src/config.js';
+import { DEADLINE_ISO, DEADLINE_LABEL } from '../src/config.js';
 import { sanitizeRegistration } from '../src/lib/validation.js';
-import { query } from '../server/db.js';
+import { TABLE, query } from '../server/db.js';
 import { readJson, route, send } from '../server/http.js';
 
 export default route(['POST'], async (req, res) => {
   if (Date.now() >= new Date(DEADLINE_ISO).getTime()) {
-    return send(res, 403, { ok: false, code: 'closed', error: 'Les inscriptions sont closes depuis le lundi 12 octobre 2026 à minuit.' });
+    return send(res, 403, { ok: false, code: 'closed', error: `Les inscriptions sont closes depuis le ${DEADLINE_LABEL.toLowerCase()}.` });
   }
 
   const body = await readJson(req);
@@ -18,11 +18,11 @@ export default route(['POST'], async (req, res) => {
   }
 
   const rows = await query(
-    `INSERT INTO registrations (nom, prenom, telephone, classe)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO ${TABLE} (nom, prenom, telephone, classe, chambre)
+     VALUES ($1, $2, $3, $4, $5)
      ON CONFLICT (telephone) DO NOTHING
      RETURNING id, created_at`,
-    [data.nom, data.prenom, data.telephone, data.classe],
+    [data.nom, data.prenom, data.telephone, data.classe, data.chambre],
   );
 
   if (!rows.length) {

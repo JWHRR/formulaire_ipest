@@ -25,7 +25,8 @@ test('recherche : accents, ordre des mots, chiffres du téléphone', () => {
 
 test('CSV : BOM, séparateur ;, téléphone en texte, injection neutralisée', () => {
   const csv = toCsv([r(1, 'BEN; SALAH', 'Amine', '=CMD()')]);
-  assert.ok(csv.startsWith('﻿N°;Nom;Prénom;Téléphone;Classe;'));
+  assert.ok(csv.startsWith('﻿N°;Nom;Prénom;Téléphone;Classe;Chambre (foyer);'));
   const line = csv.split('\r\n')[1];
-  assert.equal(line, `1;"BEN; SALAH";Amine;"=""+216 22 123 456""";'=CMD();09/10/2026 à 11:00`);
+  assert.equal(line, `1;"BEN; SALAH";Amine;"=""+216 22 123 456""";'=CMD();Hors foyer;09/10/2026 à 11:00`);
+  assert.ok(toCsv([{ ...r(2, 'X', 'Y', 'PC'), chambre: 'B12' }]).includes(';PC;B12;'));
 });

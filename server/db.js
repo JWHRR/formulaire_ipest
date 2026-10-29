@@ -5,16 +5,22 @@
 import { neon } from '@neondatabase/serverless';
 import { ConfigError } from './http.js';
 
+export const TABLE = 'padel_registrations';
+
 const SCHEMA = [
-  `CREATE TABLE IF NOT EXISTS registrations (
+  // Suppression définitive des inscriptions de l'ancien événement (sortie Dougga & Testour),
+  // demandée par l'organisateur. Sans effet une fois la table supprimée.
+  `DROP TABLE IF EXISTS registrations`,
+  `CREATE TABLE IF NOT EXISTS ${TABLE} (
      id SERIAL PRIMARY KEY,
      nom TEXT NOT NULL,
      prenom TEXT NOT NULL,
      telephone TEXT NOT NULL,
      classe TEXT NOT NULL,
+     chambre TEXT,
      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
    )`,
-  `CREATE UNIQUE INDEX IF NOT EXISTS registrations_telephone_key ON registrations (telephone)`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS ${TABLE}_telephone_key ON ${TABLE} (telephone)`,
   `CREATE TABLE IF NOT EXISTS admin_login_attempts (
      id SERIAL PRIMARY KEY,
      ip TEXT NOT NULL,

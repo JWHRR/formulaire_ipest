@@ -6,6 +6,9 @@ import { PGlite } from '@electric-sql/pglite';
 process.env.ADMIN_PASSWORD = 'mot-de-passe-test-123';
 const pg = new PGlite();
 globalThis.__IPEST_DEV_DB__ = { query: async (t, p) => (await pg.query(t, p)).rows };
+// Simule les données de l'ancien événement, qui doivent être supprimées.
+await pg.query('CREATE TABLE registrations (id SERIAL PRIMARY KEY, nom TEXT)');
+await pg.query("INSERT INTO registrations (nom) VALUES ('ANCIEN')");
 
 const register = (await import('../api/register.js')).default;
 const login = (await import('../api/admin/login.js')).default;
@@ -26,7 +29,7 @@ async function call(handler, { method = 'GET', body, url = '/', cookie, ip = '1.
   return { status: res.statusCode, data: JSON.parse(res.raw), headers: res.headers };
 }
 
-const student = { nom: 'ben salah', prenom: 'amine', telephone: '22 123 456', classe: 'Classe A', website: '' };
+const student = { nom: 'ben salah', prenom: 'amine', telephone: '22 123 456', classe: 'Classe A', chambre: 'b12', horsFoyer: false, website: '' };
 let cookie;
 
 before(async () => {
@@ -38,11 +41,17 @@ test('inscription valide → 201 et enregistrée (normalisée)', async () => {
   const r = await call(register, { method: 'POST', body: student });
   assert.equal(r.status, 201);
   assert.equal(r.data.ok, true);
-  const rows = await globalThis.__IPEST_DEV_DB__.query('SELECT * FROM registrations');
+  const rows = await globalThis.__IPEST_DEV_DB__.query('SELECT * FROM padel_registrations');
   assert.equal(rows.length, 1);
   assert.equal(rows[0].nom, 'BEN SALAH');
   assert.equal(rows[0].prenom, 'Amine');
   assert.equal(rows[0].telephone, '+216 22 123 456');
+  assert.equal(rows[0].chambre, 'B12');
+});
+
+test('anciennes inscriptions (Dougga) supprimées', async () => {
+  const r = await pg.query("SELECT to_regclass('public.registrations') AS t");
+  assert.equal(r.rows[0].t, null);
 });
 
 test('même numéro (autre format) → 409 doublon', async () => {
@@ -71,7 +80,7 @@ test('JSON invalide → 400 ; GET → 405', async () => {
 });
 
 test('après la date limite → 403 closes', async (t) => {
-  t.mock.method(Date, 'now', () => new Date('2026-10-13T00:00:01+01:00').getTime());
+  t.mock.method(Date, 'now', () => new Date('2026-11-03T00:00:01+01:00').getTime());
   const r = await call(register, { method: 'POST', body: { ...student, telephone: '55 111 222' } });
   assert.equal(r.status, 403);
   assert.equal(r.data.code, 'closed');
@@ -91,11 +100,12 @@ test('admin : cookie sécurisé (HttpOnly, SameSite=Strict) et déconnexion', as
 });
 
 test('admin : liste puis suppression', async () => {
-  await call(register, { method: 'POST', body: { ...student, prenom: 'Sarra', telephone: '98 765 432' } });
+  await call(register, { method: 'POST', body: { ...student, prenom: 'Sarra', telephone: '98 765 432', chambre: '', horsFoyer: true } });
   const list = await call(registrations, { cookie });
   assert.equal(list.status, 200);
   assert.equal(list.data.registrations.length, 2);
   assert.match(list.data.registrations[0].createdAt, /^\d{4}-\d\d-\d\dT/);
+  assert.deepEqual(list.data.registrations.map((r) => r.chambre), ['B12', null]);
 
   const id = list.data.registrations[1].id;
   const del = (q) => call(registrations, { method: 'DELETE', url: `/api/admin/registrations?id=${q}`, cookie });

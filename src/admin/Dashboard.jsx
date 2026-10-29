@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowUpDown, CalendarCheck, CircleAlert, Download, ExternalLink, Filter, Hourglass, Inbox, Layers, LoaderCircle,
+  ArrowUpDown, BedDouble, CalendarCheck, CircleAlert, Download, ExternalLink, Filter, Hourglass, Inbox, LoaderCircle,
   LogOut, Phone, Printer, RefreshCw, Search, Trash2, Users, X,
 } from 'lucide-react';
 import { DEADLINE_ISO, EVENT, LOGO_SRC } from '../config.js';
@@ -59,6 +59,7 @@ export default function Dashboard({ onExpired, onLogout }) {
   const classes = useMemo(() => groupByClass(all), [all]);
   const today = tunisDay(new Date());
   const todayCount = all.filter((r) => tunisDay(r.createdAt) === today).length;
+  const foyerCount = all.filter((r) => r.chambre).length;
 
   const visible = useMemo(
     () =>
@@ -75,7 +76,7 @@ export default function Dashboard({ onExpired, onLogout }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `inscrits-dougga-testour-${today}${activeClassLabel ? `-${classKey(activeClassLabel)}` : ''}.csv`;
+    a.download = `inscrits-padel-${today}${activeClassLabel ? `-${classKey(activeClassLabel)}` : ''}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -113,7 +114,7 @@ export default function Dashboard({ onExpired, onLogout }) {
         <div className="admin__head">
           <div>
             <h1 className="admin__title">Inscriptions</h1>
-            <p className="admin__sub">Sortie {EVENT.title} — {EVENT.dateLabel}</p>
+            <p className="admin__sub">{EVENT.title} — {EVENT.dateLabel}</p>
           </div>
           <p className="admin__updated" aria-live="polite">
             {loading ? (
@@ -144,7 +145,7 @@ export default function Dashboard({ onExpired, onLogout }) {
             <section className="stats" aria-label="Chiffres clés">
               <Stat icon={Users} label="Inscrits" value={all.length} />
               <Stat icon={CalendarCheck} label="Aujourd’hui" value={todayCount} />
-              <Stat icon={Layers} label="Classes" value={classes.length} />
+              <Stat icon={BedDouble} label="Au foyer" value={foyerCount} />
               <Stat
                 icon={Hourglass}
                 label={countdown.closed ? 'Inscriptions' : 'Clôture dans'}
@@ -265,6 +266,7 @@ export default function Dashboard({ onExpired, onLogout }) {
                           <th scope="col">Prénom</th>
                           <th scope="col">Téléphone</th>
                           <th scope="col">Classe</th>
+                          <th scope="col">Chambre</th>
                           <th scope="col">Inscription</th>
                           <th scope="col"><span className="sr-only">Actions</span></th>
                         </tr>
@@ -277,6 +279,7 @@ export default function Dashboard({ onExpired, onLogout }) {
                             <td>{r.prenom}</td>
                             <td><a className="phone" href={`tel:${r.telephone.replace(/\s/g, '')}`}>{r.telephone}</a></td>
                             <td><span className="class-tag">{r.classe}</span></td>
+                            <td>{r.chambre ? <span className="room-tag">{r.chambre}</span> : <span className="muted">Hors foyer</span>}</td>
                             <td className="muted">{formatDateTime(r.createdAt)}</td>
                             <td className="actions">
                               <button type="button" className="icon-btn" onClick={() => setToDelete(r)} aria-label={`Supprimer l’inscription de ${r.prenom} ${r.nom}`}>
@@ -303,6 +306,7 @@ export default function Dashboard({ onExpired, onLogout }) {
                         </div>
                         <div className="reg-card__meta">
                           <span className="class-tag">{r.classe}</span>
+                          {r.chambre ? <span className="room-tag"><BedDouble size={13} aria-hidden="true" /> {r.chambre}</span> : <span className="muted">Hors foyer</span>}
                           <span className="muted">{formatDateTime(r.createdAt)}</span>
                         </div>
                         <a className="reg-card__call" href={`tel:${r.telephone.replace(/\s/g, '')}`}>
@@ -402,19 +406,19 @@ function ConfirmDelete({ row, onClose, onDeleted, onExpired }) {
 function PrintSheet({ rows, classLabel }) {
   return (
     <section className="print-sheet" aria-hidden="true">
-      <h1>Sortie {EVENT.title} — {EVENT.dateLabel}</h1>
+      <h1>{EVENT.title} — {EVENT.dateLabel}</h1>
       <p>
         {EVENT.organizer} · Liste des inscrits{classLabel ? ` — Classe ${classLabel}` : ''} · {rows.length} participant
         {rows.length > 1 ? 's' : ''} · Imprimé le {formatDateTime(new Date().toISOString())}
       </p>
       <table>
         <thead>
-          <tr><th>N°</th><th>Nom</th><th>Prénom</th><th>Téléphone</th><th>Classe</th><th>Présent</th></tr>
+          <tr><th>N°</th><th>Nom</th><th>Prénom</th><th>Téléphone</th><th>Classe</th><th>Chambre</th><th>Présent</th></tr>
         </thead>
         <tbody>
           {rows.map((r, i) => (
             <tr key={r.id}>
-              <td>{i + 1}</td><td>{r.nom}</td><td>{r.prenom}</td><td>{r.telephone}</td><td>{r.classe}</td><td className="box">☐</td>
+              <td>{i + 1}</td><td>{r.nom}</td><td>{r.prenom}</td><td>{r.telephone}</td><td>{r.classe}</td><td>{r.chambre || '—'}</td><td className="box">☐</td>
             </tr>
           ))}
         </tbody>

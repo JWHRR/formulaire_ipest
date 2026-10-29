@@ -5,6 +5,7 @@ export const OTHER_CLASS = '__other__';
 
 const NAME_RE = /^\p{L}[\p{L}\p{M}' .-]*$/u;
 const CLASS_RE = /^[\p{L}\p{N}][\p{L}\p{M}\p{N}' .()/+-]*$/u;
+const ROOM_RE = /^[\p{L}\p{N}][\p{L}\p{N} ./-]*$/u;
 
 const collapse = (s) => String(s ?? '').trim().replace(/\s+/g, ' ');
 
@@ -45,11 +46,23 @@ function classError(value) {
   return undefined;
 }
 
+function roomError(value, horsFoyer) {
+  if (horsFoyer) return undefined;
+  const v = collapse(value);
+  if (!v) return 'Veuillez indiquer votre numéro de chambre, ou cochez « Je ne suis pas logé(e) au foyer ».';
+  if (v.length > 12) return 'Le numéro de chambre ne doit pas dépasser 12 caractères.';
+  if (!ROOM_RE.test(v)) return 'Numéro de chambre invalide (lettres, chiffres, tirets uniquement).';
+  return undefined;
+}
+
+/** Chambre en majuscules (« b12 » → « B12 ») ; null = étudiant non logé au foyer. */
+export const formatChambre = (s, horsFoyer) => (horsFoyer ? null : collapse(s).toLocaleUpperCase('fr'));
+
 /** Classe en majuscules pour regrouper « mp1 » et « MP1 ». */
 export const formatClasse = (s) => collapse(s).toLocaleUpperCase('fr');
 
-/** Validation des 4 champs, une fois la classe déterminée. */
-export function validateFields({ nom, prenom, telephone, classe }) {
+/** Validation des champs, une fois la classe déterminée. */
+export function validateFields({ nom, prenom, telephone, classe, chambre, horsFoyer }) {
   const errors = {};
   const e1 = nameError(nom, 'nom');
   const e2 = nameError(prenom, 'prénom');
@@ -62,6 +75,9 @@ export function validateFields({ nom, prenom, telephone, classe }) {
 
   const e3 = classError(classe);
   if (e3) errors.classe = e3;
+
+  const e4 = roomError(chambre, horsFoyer === true);
+  if (e4) errors.chambre = e4;
   return errors;
 }
 
@@ -89,6 +105,8 @@ export function buildPayload(values) {
     prenom: collapse(values.prenom),
     telephone: values.telephone,
     classe: collapse(resolveClass(values)),
+    chambre: values.horsFoyer ? '' : collapse(values.chambre),
+    horsFoyer: values.horsFoyer === true,
     website: values.website || '', // champ piège anti-robot, doit rester vide
   };
 }
@@ -99,7 +117,10 @@ export function buildPayload(values) {
 export function sanitizeRegistration(body) {
   const input = body && typeof body === 'object' ? body : {};
   const str = (k) => (typeof input[k] === 'string' ? input[k] : '');
-  const raw = { nom: str('nom'), prenom: str('prenom'), telephone: str('telephone'), classe: str('classe') };
+  const raw = {
+    nom: str('nom'), prenom: str('prenom'), telephone: str('telephone'), classe: str('classe'),
+    chambre: str('chambre'), horsFoyer: input.horsFoyer === true,
+  };
   const errors = validateFields(raw);
   if (Object.keys(errors).length) return { errors };
   return {
@@ -108,6 +129,7 @@ export function sanitizeRegistration(body) {
       prenom: formatPrenom(raw.prenom),
       telephone: normalizeTunisianPhone(raw.telephone),
       classe: formatClasse(raw.classe),
+      chambre: formatChambre(raw.chambre, raw.horsFoyer),
     },
   };
 }
