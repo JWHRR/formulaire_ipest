@@ -1,7 +1,7 @@
-import { ArrowDown, CalendarDays, Clock, GraduationCap, MapPin } from 'lucide-react';
+import { ArrowDown, CalendarDays, ClipboardCheck, Clock, MapPin } from 'lucide-react';
 import { EVENT } from '../config.js';
 import Countdown from './Countdown.jsx';
-import { Ball, Court, Racket } from './PadelArt.jsx';
+import { Ball, Court, Paddle, Shuttlecock } from './SportArt.jsx';
 
 export function scrollToForm(e) {
   e?.preventDefault();
@@ -23,15 +23,16 @@ export default function Hero({ countdown }) {
       <div className="container hero__grid">
         <div className="hero__content">
           <p className="hero__audience">
-            <GraduationCap size={18} aria-hidden="true" /> {EVENT.audience}
+            <ClipboardCheck size={18} aria-hidden="true" /> Inscription obligatoire
           </p>
 
           <h1 id="hero-title" className="hero__title">
             <span className="hero__kicker">{EVENT.kicker}</span>
-            <span className="hero__sport">{EVENT.sport}</span>
+            <span className="hero__sport">{EVENT.sports[0]}</span>
+            <span className="hero__sport hero__sport--alt">{EVENT.sports[1]}</span>
           </h1>
 
-          <p className="slash-banner"><span>“{EVENT.slogan}”</span></p>
+          <p className="slash-banner"><span>{EVENT.slogan}</span></p>
 
           <ul className="hero__meta" aria-label="Informations pratiques">
             <li><CalendarDays size={18} aria-hidden="true" /> {EVENT.dateLabel}</li>
@@ -53,7 +54,8 @@ export default function Hero({ countdown }) {
 
         <div className="hero__art" aria-hidden="true">
           <span className="hero__ring" />
-          <Racket className="hero__racket" />
+          <Paddle className="hero__racket" />
+          <Shuttlecock className="hero__shuttle" />
           <Ball className="hero__ball" />
         </div>
       </div>

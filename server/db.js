@@ -5,12 +5,13 @@
 import { neon } from '@neondatabase/serverless';
 import { ConfigError } from './http.js';
 
-export const TABLE = 'padel_registrations';
+export const TABLE = 'sport_registrations';
 
 const SCHEMA = [
-  // Suppression définitive des inscriptions de l'ancien événement (sortie Dougga & Testour),
-  // demandée par l'organisateur. Sans effet une fois la table supprimée.
+  // Suppression définitive des inscriptions des anciens événements (sortie Dougga & Testour,
+  // journée padel), demandée par l'organisateur. Sans effet une fois les tables supprimées.
   `DROP TABLE IF EXISTS registrations`,
+  `DROP TABLE IF EXISTS padel_registrations`,
   `CREATE TABLE IF NOT EXISTS ${TABLE} (
      id SERIAL PRIMARY KEY,
      nom TEXT NOT NULL,

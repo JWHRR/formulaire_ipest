@@ -9,6 +9,8 @@ globalThis.__IPEST_DEV_DB__ = { query: async (t, p) => (await pg.query(t, p)).ro
 // Simule les données de l'ancien événement, qui doivent être supprimées.
 await pg.query('CREATE TABLE registrations (id SERIAL PRIMARY KEY, nom TEXT)');
 await pg.query("INSERT INTO registrations (nom) VALUES ('ANCIEN')");
+await pg.query('CREATE TABLE padel_registrations (id SERIAL PRIMARY KEY, nom TEXT)');
+await pg.query("INSERT INTO padel_registrations (nom) VALUES ('PADEL')");
 
 const register = (await import('../api/register.js')).default;
 const login = (await import('../api/admin/login.js')).default;
@@ -41,7 +43,7 @@ test('inscription valide → 201 et enregistrée (normalisée)', async () => {
   const r = await call(register, { method: 'POST', body: student });
   assert.equal(r.status, 201);
   assert.equal(r.data.ok, true);
-  const rows = await globalThis.__IPEST_DEV_DB__.query('SELECT * FROM padel_registrations');
+  const rows = await globalThis.__IPEST_DEV_DB__.query('SELECT * FROM sport_registrations');
   assert.equal(rows.length, 1);
   assert.equal(rows[0].nom, 'BEN SALAH');
   assert.equal(rows[0].prenom, 'Amine');
@@ -49,9 +51,10 @@ test('inscription valide → 201 et enregistrée (normalisée)', async () => {
   assert.equal(rows[0].chambre, 'B12');
 });
 
-test('anciennes inscriptions (Dougga) supprimées', async () => {
-  const r = await pg.query("SELECT to_regclass('public.registrations') AS t");
-  assert.equal(r.rows[0].t, null);
+test('anciennes inscriptions (Dougga, padel) supprimées', async () => {
+  const r = await pg.query("SELECT to_regclass('public.registrations') AS a, to_regclass('public.padel_registrations') AS b");
+  assert.equal(r.rows[0].a, null);
+  assert.equal(r.rows[0].b, null);
 });
 
 test('même numéro (autre format) → 409 doublon', async () => {
@@ -80,7 +83,7 @@ test('JSON invalide → 400 ; GET → 405', async () => {
 });
 
 test('après la date limite → 403 closes', async (t) => {
-  t.mock.method(Date, 'now', () => new Date('2026-11-03T00:00:01+01:00').getTime());
+  t.mock.method(Date, 'now', () => new Date('2026-11-10T00:00:01+01:00').getTime());
   const r = await call(register, { method: 'POST', body: { ...student, telephone: '55 111 222' } });
   assert.equal(r.status, 403);
   assert.equal(r.data.code, 'closed');

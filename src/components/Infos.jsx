@@ -1,23 +1,23 @@
-import { BadgeCheck, CalendarDays, GraduationCap, MapPin, Music, PartyPopper, Ticket } from 'lucide-react';
-import { EVENT, PERKS, POSTER_SRC } from '../config.js';
-import { Racket } from './PadelArt.jsx';
+import { CalendarDays, ClipboardCheck, KeyRound, MapPin, PartyPopper } from 'lucide-react';
+import { DEADLINE_LABEL, EVENT, PERKS, POSTER_SRC } from '../config.js';
+import { Paddle } from './SportArt.jsx';
 import Reveal from './Reveal.jsx';
 
-const RacketIcon = ({ size = 24 }) => <Racket className="perk__racket" style={{ height: size }} />;
-const PERK_ICONS = { racket: RacketIcon, ticket: Ticket, party: PartyPopper, music: Music };
+const PaddleIcon = ({ size = 24 }) => <Paddle className="perk__racket" style={{ height: size }} />;
+const PERK_ICONS = { paddle: PaddleIcon, party: PartyPopper, key: KeyRound };
 
 const FACTS = [
   { icon: CalendarDays, label: 'Quand', value: EVENT.dateLabel, detail: EVENT.timeLabel },
   { icon: MapPin, label: 'Lieu', value: EVENT.venue },
-  { icon: BadgeCheck, label: 'Coach certifiée', value: EVENT.coach },
-  { icon: GraduationCap, label: 'Pour qui ?', value: EVENT.audience },
+  { icon: PaddleIcon, label: 'Matériel fourni', value: EVENT.equipment },
+  { icon: ClipboardCheck, label: 'Inscription obligatoire', value: `Avant le ${DEADLINE_LABEL.toLowerCase()}` },
 ];
 
 export default function Infos() {
   return (
     <>
       <div className="ribbon" aria-hidden="true">
-        <span>{EVENT.tagline}</span>
+        <span>Ping Pong • Badminton</span>
       </div>
 
       <section className="section infos" id="infos" aria-labelledby="infos-title">
@@ -26,8 +26,8 @@ export default function Infos() {
             <p className="eyebrow">L’essentiel</p>
             <h2 id="infos-title" className="section__title">Tout savoir sur la journée</h2>
             <p className="section__lead">
-              Une après-midi pour s’initier au padel avec une coach certifiée, dans une ambiance festive.
-              Aucun matériel à prévoir : les raquettes sont fournies et l’entrée est gratuite.
+              Un après-midi de ping-pong et de badminton {EVENT.venueIn}, dans une ambiance festive.
+              Aucun matériel à prévoir : raquettes, volants et balles sont fournis. Jouez, partagez, dépassez-vous !
             </p>
           </Reveal>
 
@@ -46,7 +46,7 @@ export default function Infos() {
             <Reveal as="figure" className="poster" delay={120}>
               <a href={POSTER_SRC} target="_blank" rel="noopener" className="poster__link">
                 <img
-                  src={POSTER_SRC} width="900" height="1159" loading="lazy" decoding="async"
+                  src={POSTER_SRC} width="900" height="1272" loading="lazy" decoding="async"
                   alt={`Affiche officielle : ${EVENT.title}, ${EVENT.dateLabel}, ${EVENT.venue}`}
                 />
               </a>
@@ -55,12 +55,13 @@ export default function Infos() {
           </div>
 
           <Reveal as="ul" className="perks" aria-label="Sur place">
-            {PERKS.map(({ icon, label }) => {
+            {PERKS.map(({ icon, label, detail }) => {
               const Icon = PERK_ICONS[icon];
               return (
                 <li className="perk" key={label}>
                   <span className="perk__icon" aria-hidden="true"><Icon size={24} /></span>
                   <span className="perk__label">{label}</span>
+                  {detail && <span className="perk__detail">{detail}</span>}
                 </li>
               );
             })}

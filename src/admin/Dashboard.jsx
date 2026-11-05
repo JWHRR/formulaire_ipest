@@ -76,7 +76,7 @@ export default function Dashboard({ onExpired, onLogout }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `inscrits-padel-${today}${activeClassLabel ? `-${classKey(activeClassLabel)}` : ''}.csv`;
+    a.download = `inscrits-ping-pong-badminton-${today}${activeClassLabel ? `-${classKey(activeClassLabel)}` : ''}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();

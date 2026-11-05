@@ -121,7 +121,7 @@ export default function Registration({ countdown }) {
               <h3>Inscription enregistrée !</h3>
               <p>
                 Merci pour votre inscription à la {EVENT.title}. Votre réponse a bien été prise en compte.
-                Rendez-vous le {EVENT.dateLabel.toLowerCase()} à {EVENT.venue} !
+                Rendez-vous le {EVENT.dateLabel.toLowerCase()} {EVENT.venueIn} !
               </p>
               <button type="button" className="btn btn--ghost" onClick={reset}>Inscrire une autre personne</button>
             </div>

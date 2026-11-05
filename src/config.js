@@ -6,33 +6,31 @@ export const EVENT = {
   organizer: 'Service Socio-Culturel de l’IPEST',
   institution: 'Institut Préparatoire aux Études Scientifiques et Techniques',
   institutionShort: 'IPEST',
-  title: 'Journée Porte Ouverte Padel',
+  title: 'Journée Porte Ouverte Ping Pong et Badminton',
   kicker: 'Journée porte ouverte',
-  sport: 'Padel',
-  slogan: 'Plus qu’un jeu, un style de vie !',
-  tagline: 'Découvrez votre nouvelle passion !',
-  audience: 'Étudiants des établissements de l’Université de Carthage',
-  dateLabel: 'Mercredi 4 novembre 2026',
-  timeLabel: 'À partir de 12h – 15h',
-  venue: 'Padelite Tunisia – Lac 3',
-  coach: 'Madame Sonia Azzouz',
+  sports: ['Ping Pong', 'et Badminton'],
+  slogan: 'Jouez • Partagez • Dépassez-vous !',
+  dateLabel: 'Mercredi 11 novembre 2026',
+  timeLabel: 'L’après-midi',
+  venue: 'Salle de sport de l’IPEST',
+  venueIn: 'à la salle de sport de l’IPEST',
+  equipment: 'Raquettes, volants, balles',
 };
 
 export const PERKS = [
-  { icon: 'racket', label: 'Raquettes fournies' },
-  { icon: 'ticket', label: 'Entrée gratuite' },
+  { icon: 'paddle', label: 'Matériel fourni', detail: '(raquettes, volants, balles)' },
   { icon: 'party', label: 'Ambiance festive' },
-  { icon: 'music', label: 'DJ Set' },
+  { icon: 'key', label: 'Inscription obligatoire' },
 ];
 
 // Affiche officielle (dans /public).
-export const POSTER_SRC = '/affiche-padel.jpg';
+export const POSTER_SRC = '/affiche-ping-pong-badminton.jpg';
 
-// Clôture des inscriptions : lundi 2 novembre 2026 à minuit (heure de Tunis, UTC+1).
-// « Minuit le 2 » = fin de la journée du 2, soit le 3 novembre à 00:00.
+// Clôture des inscriptions : lundi 9 novembre 2026 à minuit (heure de Tunis, UTC+1).
+// « Minuit le 9 » = fin de la journée du 9, soit le 10 novembre à 00:00.
 // Appliquée à la fois sur le site et par l'API.
-export const DEADLINE_ISO = '2026-11-03T00:00:00+01:00';
-export const DEADLINE_LABEL = 'Lundi 2 novembre 2026 à minuit';
+export const DEADLINE_ISO = '2026-11-10T00:00:00+01:00';
+export const DEADLINE_LABEL = 'Lundi 9 novembre 2026 à minuit';
 
 // Liste des classes proposées dans un menu déroulant.
 // Vide : le champ « Classe » est une saisie libre.

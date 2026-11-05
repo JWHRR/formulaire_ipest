@@ -1,8 +1,8 @@
-# IPEST — Inscription à la Journée Porte Ouverte Padel
+# IPEST — Inscription à la Journée Porte Ouverte Ping Pong et Badminton
 
-Site d'inscription des étudiants de l'IPEST à la **Journée Porte Ouverte Padel** du **mercredi 4 novembre 2026** (à partir de 12h – 15h, Padelite Tunisia – Lac 3), géré par le Service Socio-Culturel, avec un **espace organisateur** (`/admin`) protégé par mot de passe.
+Site d'inscription des étudiants de l'IPEST à la **Journée Porte Ouverte Ping Pong et Badminton** du **mercredi 11 novembre 2026** (l'après-midi, salle de sport de l'IPEST), géré par le Service Socio-Culturel, avec un **espace organisateur** (`/admin`) protégé par mot de passe.
 
-Les inscriptions ferment le **lundi 2 novembre 2026 à minuit** (heure de Tunis). Un compte à rebours est affiché sur le site. Après l'échéance, le formulaire se ferme, et le serveur refuse lui aussi toute nouvelle inscription.
+Les inscriptions ferment le **lundi 9 novembre 2026 à minuit** (heure de Tunis). Un compte à rebours est affiché sur le site. Après l'échéance, le formulaire se ferme, et le serveur refuse lui aussi toute nouvelle inscription.
 
 ```
 Étudiant ─▶ site (React) ─▶ /api/register (fonction Vercel) ─▶ base PostgreSQL (Neon)
@@ -83,7 +83,7 @@ En local, laissez `DATABASE_URL` vide : une base PostgreSQL embarquée (PGlite) 
 
 ## 3. Maintenance
 
-Les inscriptions de l'ancien événement (sortie Dougga & Testour, table `registrations`) sont **supprimées définitivement** au premier démarrage de cette version. Les inscriptions au padel sont enregistrées dans une nouvelle table, `padel_registrations`.
+Les inscriptions des anciens événements (sortie Dougga & Testour, table `registrations` ; journée padel, table `padel_registrations`) sont **supprimées définitivement** au premier démarrage de cette version. Les inscriptions à la journée ping-pong et badminton sont enregistrées dans une nouvelle table, `sport_registrations`.
 
 | Besoin | Où |
 |---|---|
