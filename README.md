@@ -11,7 +11,7 @@ Organisateur ─▶ /admin ─▶ /api/admin/* (session sécurisée) ─▶ mêm
 
 ## Fonctionnalités
 
-**Formulaire public.** Champs obligatoires : Nom, Prénom, Numéro de téléphone, Classe et **Numéro de chambre (foyer)**. Un étudiant non logé au foyer coche « Je ne suis pas logé(e) au foyer » à la place du numéro de chambre.
+**Formulaire public.** Champs obligatoires : **Sport** (Ping Pong, Badminton ou Les deux), Nom, Prénom, Numéro de téléphone, Classe et **Numéro de chambre (foyer)**. Un étudiant non logé au foyer coche « Je ne suis pas logé(e) au foyer » à la place du numéro de chambre.
 
 - Les erreurs s'affichent en français, à la fois sur le téléphone et côté serveur.
 - Les numéros tunisiens sont acceptés avec ou sans `+216`, puis enregistrés au format `+216 XX XXX XXX`.
@@ -24,11 +24,12 @@ Organisateur ─▶ /admin ─▶ /api/admin/* (session sécurisée) ─▶ mêm
 
 - Chiffres clés : nombre d'inscrits, inscriptions du jour, nombre d'inscrits logés au foyer, temps restant avant la clôture.
 - Répartition par classe. Touchez une classe pour filtrer la liste.
-- Recherche par nom, prénom, téléphone, classe ou chambre, sans tenir compte des accents.
+- Filtre par sport (les inscrits « Les deux » comptent dans chaque sport) et nombre de joueurs par sport.
+- Recherche par nom, prénom, téléphone, classe, chambre ou sport, sans tenir compte des accents.
 - Tri : plus récentes, plus anciennes, par nom ou par classe.
 - Sur téléphone, les inscriptions s'affichent en cartes avec un bouton d'appel direct. Sur ordinateur, elles s'affichent en tableau.
 - **Export Excel** (CSV compatible Excel et Google Sheets) de la liste affichée.
-- **Impression** d'une liste d'appel alphabétique (avec la chambre) et une colonne « Présent ». Elle tient compte du filtre de classe.
+- **Impression** d'une liste d'appel alphabétique (avec la chambre et le sport) et une colonne « Présent ». Elle tient compte des filtres de classe et de sport.
 - Suppression d'une inscription, avec confirmation.
 - Actualisation automatique toutes les 30 secondes.
 

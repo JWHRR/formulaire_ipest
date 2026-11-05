@@ -21,6 +21,9 @@ const SCHEMA = [
      chambre TEXT,
      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
    )`,
+  // Choix du sport, ajouté après l'ouverture des inscriptions : les inscriptions
+  // déjà reçues sont conservées (sport vide = non précisé).
+  `ALTER TABLE ${TABLE} ADD COLUMN IF NOT EXISTS sport TEXT`,
   `CREATE UNIQUE INDEX IF NOT EXISTS ${TABLE}_telephone_key ON ${TABLE} (telephone)`,
   `CREATE TABLE IF NOT EXISTS admin_login_attempts (
      id SERIAL PRIMARY KEY,

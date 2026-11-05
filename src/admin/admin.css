@@ -146,6 +146,13 @@
   display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px;
   background: var(--gold-100); color: var(--orange-700); font-weight: 700; font-size: 0.85rem; white-space: nowrap;
 }
+.sport-tag {
+  display: inline-block; padding: 3px 10px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; white-space: nowrap;
+  background: #ffe4e2; color: #a3141c;
+}
+.sport-tag--badminton { background: #e3f6ec; color: #0d6b44; }
+.sport-tag--les-deux { background: var(--navy-800); color: #fff; }
+.stat__note { font-size: 0.78rem; color: var(--muted); }
 .class-tag {
   display: inline-block; padding: 3px 10px; border-radius: 999px;
   background: var(--sky-100); color: var(--navy-800); font-weight: 600; font-size: 0.85rem; white-space: nowrap;
@@ -209,18 +216,17 @@
 }
 
 @media (min-width: 720px) {
-  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .panel { padding: 24px; }
-  .toolbar { grid-template-columns: minmax(220px, 1fr) auto auto; }
-  .toolbar__search { grid-column: auto; }
-  .toolbar__select select { width: auto; min-width: 170px; }
+  .toolbar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .toolbar__actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
   .table-wrap { display: block; }
   .cards { display: none; }
 }
 @media (min-width: 1100px) {
   .toolbar { grid-template-columns: minmax(240px, 1fr) auto auto auto; }
-  .toolbar__actions { grid-column: auto; }
+  .toolbar__search { grid-column: auto; }
+  .toolbar__select select { width: auto; min-width: 170px; }
 }
 
 /* ---------- Impression : liste d'appel ---------- */

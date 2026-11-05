@@ -1,4 +1,5 @@
 // Outils de présentation des inscriptions (purs, testés dans tests/).
+import { sportLabel } from '../config.js';
 
 const TZ = 'Africa/Tunis';
 const dayFmt = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -32,11 +33,19 @@ export function groupByClass(rows) {
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'fr', { numeric: true }));
 }
 
+/** Filtre par sport : « ping-pong » et « badminton » incluent les inscrits aux deux. */
+export const SPORT_FILTERS = {
+  'ping-pong': { label: 'Joueurs de ping-pong', test: (r) => r.sport === 'ping-pong' || r.sport === 'les-deux' },
+  badminton: { label: 'Joueurs de badminton', test: (r) => r.sport === 'badminton' || r.sport === 'les-deux' },
+  'les-deux': { label: 'Inscrits aux deux', test: (r) => r.sport === 'les-deux' },
+};
+export const sportText = (r) => sportLabel(r.sport) || 'Non précisé';
+
 export function matchesSearch(r, q) {
   const query = fold(q).trim();
   if (!query) return true;
   const digits = query.replace(/\D/g, '');
-  const hay = fold(`${r.nom} ${r.prenom} ${r.prenom} ${r.nom} ${r.classe} ${r.telephone} ${r.chambre ?? ''}`);
+  const hay = fold(`${r.nom} ${r.prenom} ${r.prenom} ${r.nom} ${r.classe} ${r.telephone} ${r.chambre ?? ''} ${sportLabel(r.sport)}`);
   if (query.split(/\s+/).every((word) => hay.includes(word))) return true;
   return digits.length >= 3 && r.telephone.replace(/\D/g, '').includes(digits);
 }
@@ -58,9 +67,9 @@ const text = (v) => quote(/^[=+\-@\t\r]/.test(String(v ?? '')) ? `'${v}` : Strin
 const phone = (v) => quote(`="${String(v).replace(/[^+\d ]/g, '')}"`);
 
 export function toCsv(rows) {
-  const header = ['N°', 'Nom', 'Prénom', 'Téléphone', 'Classe', 'Chambre (foyer)', 'Date d’inscription'];
+  const header = ['N°', 'Nom', 'Prénom', 'Téléphone', 'Classe', 'Chambre (foyer)', 'Sport', 'Date d’inscription'];
   const lines = rows.map((r) =>
-    [String(r.rank), text(r.nom), text(r.prenom), phone(r.telephone), text(r.classe), text(r.chambre || 'Hors foyer'), formatDateTime(r.createdAt)].join(';'),
+    [String(r.rank), text(r.nom), text(r.prenom), phone(r.telephone), text(r.classe), text(r.chambre || 'Hors foyer'), sportText(r), formatDateTime(r.createdAt)].join(';'),
   );
   return '\uFEFF' + [header.join(';'), ...lines].join('\r\n') + '\r\n';
 }

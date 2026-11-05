@@ -11,7 +11,7 @@ export function scrollToForm(e) {
   target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
   history.replaceState(null, '', '#inscription');
   // place le focus sur le premier champ pour la navigation clavier
-  setTimeout(() => document.getElementById('nom')?.focus({ preventScroll: true }), reduce ? 0 : 650);
+  setTimeout(() => document.querySelector('input[name="sport"]')?.focus({ preventScroll: true }), reduce ? 0 : 650);
 }
 
 export default function Hero({ countdown }) {

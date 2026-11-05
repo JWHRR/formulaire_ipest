@@ -23,6 +23,14 @@ export const PERKS = [
   { icon: 'key', label: 'Inscription obligatoire' },
 ];
 
+// Choix du sport dans le formulaire (valeur enregistrée → libellé affiché).
+export const SPORT_OPTIONS = [
+  { value: 'ping-pong', label: 'Ping Pong' },
+  { value: 'badminton', label: 'Badminton' },
+  { value: 'les-deux', label: 'Les deux' },
+];
+export const sportLabel = (value) => SPORT_OPTIONS.find((o) => o.value === value)?.label ?? '';
+
 // Affiche officielle (dans /public).
 export const POSTER_SRC = '/affiche-ping-pong-badminton.jpg';
 

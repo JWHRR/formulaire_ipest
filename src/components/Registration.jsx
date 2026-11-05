@@ -2,19 +2,20 @@ import { useRef, useState } from 'react';
 import {
   BedDouble, CircleAlert, CircleCheckBig, GraduationCap, IdCard, LoaderCircle, Lock, Phone, RefreshCw, Send, User,
 } from 'lucide-react';
-import { CLASS_OPTIONS, EVENT } from '../config.js';
+import { CLASS_OPTIONS, EVENT, SPORT_OPTIONS } from '../config.js';
 import { OTHER_CLASS, buildPayload, normalizeTunisianPhone, validateRegistration } from '../lib/validation.js';
 import { submitRegistration } from '../lib/submit.js';
 import Countdown from './Countdown.jsx';
 import Field from './Field.jsx';
+import { Paddle, Shuttlecock } from './SportArt.jsx';
 import Reveal from './Reveal.jsx';
 
 const WITH_SELECT = CLASS_OPTIONS.length > 0;
 const EMPTY = {
-  nom: '', prenom: '', telephone: '', classe: '', classeAutre: '', chambre: '', horsFoyer: false,
+  sport: '', nom: '', prenom: '', telephone: '', classe: '', classeAutre: '', chambre: '', horsFoyer: false,
   website: '', withSelect: WITH_SELECT,
 };
-const FIELD_ORDER = ['nom', 'prenom', 'telephone', 'classe', 'classeAutre', 'chambre'];
+const FIELD_ORDER = ['sport', 'nom', 'prenom', 'telephone', 'classe', 'classeAutre', 'chambre'];
 
 export default function Registration({ countdown }) {
   const [values, setValues] = useState(EMPTY);
@@ -29,6 +30,10 @@ export default function Registration({ countdown }) {
   const update = (name) => (e) => {
     const next = { ...values, [name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value };
     setValues(next);
+    if (name === 'sport') {
+      setErrors((prev) => ({ ...prev, sport: undefined }));
+      return;
+    }
     if (name === 'horsFoyer') {
       setErrors((prev) => ({ ...prev, chambre: next.horsFoyer ? undefined : touched.chambre ? validateRegistration(next).chambre : undefined }));
       return;
@@ -91,7 +96,7 @@ export default function Registration({ countdown }) {
   const reset = () => {
     setStatus('idle');
     setServerError(null);
-    requestAnimationFrame(() => document.getElementById('nom')?.focus());
+    requestAnimationFrame(() => document.querySelector('input[name="sport"]')?.focus());
   };
 
   const submitting = status === 'submitting';
@@ -137,6 +142,31 @@ export default function Registration({ countdown }) {
                 <h3>Formulaire d’inscription</h3>
                 <p>{EVENT.title} — {EVENT.dateLabel}</p>
               </div>
+
+              <fieldset className={`sport-choice ${err('sport') ? 'sport-choice--error' : ''}`}
+                aria-describedby={err('sport') ? 'sport-error' : undefined}>
+                <legend className="field__label">
+                  Quel sport voulez-vous pratiquer ?<span className="field__req" aria-hidden="true"> *</span>
+                </legend>
+                <div className="sport-choice__options">
+                  {SPORT_OPTIONS.map((o) => (
+                    <label className="sport-option" key={o.value}>
+                      <input type="radio" name="sport" value={o.value} checked={values.sport === o.value}
+                        onChange={update('sport')} disabled={submitting} required aria-invalid={err('sport') ? true : undefined} />
+                      <span className="sport-option__art" aria-hidden="true">
+                        {o.value !== 'badminton' && <Paddle className="sport-option__paddle" />}
+                        {o.value !== 'ping-pong' && <Shuttlecock className="sport-option__shuttle" />}
+                      </span>
+                      <span className="sport-option__label">{o.label}</span>
+                    </label>
+                  ))}
+                </div>
+                {err('sport') && (
+                  <p className="field__error" id="sport-error">
+                    <CircleAlert size={15} aria-hidden="true" /> {errors.sport}
+                  </p>
+                )}
+              </fieldset>
 
               <div className="form__row">
                 <Field id="nom" label="Nom" required icon={User} error={err('nom')}>

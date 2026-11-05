@@ -18,11 +18,11 @@ export default route(['POST'], async (req, res) => {
   }
 
   const rows = await query(
-    `INSERT INTO ${TABLE} (nom, prenom, telephone, classe, chambre)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO ${TABLE} (nom, prenom, telephone, classe, chambre, sport)
+     VALUES ($1, $2, $3, $4, $5, $6)
      ON CONFLICT (telephone) DO NOTHING
      RETURNING id, created_at`,
-    [data.nom, data.prenom, data.telephone, data.classe, data.chambre],
+    [data.nom, data.prenom, data.telephone, data.classe, data.chambre, data.sport],
   );
 
   if (!rows.length) {

@@ -496,6 +496,39 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .check input:checked { background: var(--navy-800); border-color: var(--navy-800); }
 .check input:checked::after { transform: rotate(45deg) scale(1); }
 
+/* Choix du sport : trois cartes à cocher */
+.sport-choice { margin: 0; padding: 0; border: 0; min-width: 0; display: grid; gap: 10px; }
+.sport-choice legend { padding: 0; margin-bottom: 10px; }
+.sport-choice__options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.sport-option {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 14px 6px 12px; border-radius: 16px; cursor: pointer; text-align: center;
+  background: #fff; border: 2px solid var(--line);
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s, transform 0.2s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.sport-option:hover { border-color: #b7c6e4; }
+.sport-option input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.sport-option__art { display: flex; align-items: flex-end; justify-content: center; gap: 2px; height: 52px; }
+.sport-option__paddle { height: 50px; width: auto; transform: rotate(-20deg); }
+.sport-option__shuttle { height: 40px; width: auto; transform: rotate(18deg); }
+.sport-option__label {
+  font-family: var(--font-display); font-style: italic; font-weight: 800; text-transform: uppercase;
+  font-size: 1.12rem; line-height: 1; color: var(--navy-900);
+}
+.sport-option:has(input:checked) {
+  border-color: var(--orange-500); background: var(--gold-100);
+  box-shadow: 0 10px 22px -14px rgba(242, 107, 29, 0.9); transform: translateY(-2px);
+}
+.sport-option:has(input:checked)::after {
+  content: '✓'; position: absolute; top: 6px; right: 8px; width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--orange-500); color: #fff; font-size: 0.8rem; font-weight: 800;
+}
+.sport-option:has(input:focus-visible) { outline: 3px solid var(--sky-500); outline-offset: 2px; }
+.sport-option:has(input:disabled) { opacity: 0.55; cursor: not-allowed; }
+.sport-choice--error .sport-option { border-color: #f4b8be; }
+.sport-choice--error .sport-option:has(input:checked) { border-color: var(--orange-500); }
+
 .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 
 .alert {
@@ -562,6 +595,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .perk { padding: 14px 4px; }
   .perk__label { font-size: 0.98rem; }
   .perk__detail { font-size: 0.7rem; }
+  .sport-choice__options { gap: 8px; }
+  .sport-option__label { font-size: 0.98rem; }
 }
 
 @media (min-width: 640px) {

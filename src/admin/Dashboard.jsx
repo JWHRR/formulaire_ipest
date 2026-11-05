@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowUpDown, BedDouble, CalendarCheck, CircleAlert, Download, ExternalLink, Filter, Hourglass, Inbox, LoaderCircle,
-  LogOut, Phone, Printer, RefreshCw, Search, Trash2, Users, X,
+  ArrowUpDown, BedDouble, CalendarCheck, CircleAlert, Disc, Download, ExternalLink, Feather, Filter, Hourglass, Inbox,
+  LoaderCircle, LogOut, Phone, Printer, RefreshCw, Search, Trash2, Trophy, Users, X,
 } from 'lucide-react';
 import { DEADLINE_ISO, EVENT, LOGO_SRC } from '../config.js';
 import { useCountdown } from '../lib/useCountdown.js';
 import { api } from './api.js';
-import { SORTS, classKey, formatDateTime, formatTime, groupByClass, matchesSearch, toCsv, tunisDay } from './format.js';
+import {
+  SORTS, SPORT_FILTERS, classKey, formatDateTime, formatTime, groupByClass, matchesSearch, sportText, toCsv, tunisDay,
+} from './format.js';
 
 const REFRESH_MS = 30000;
 
@@ -17,6 +19,7 @@ export default function Dashboard({ onExpired, onLogout }) {
   const [updatedAt, setUpdatedAt] = useState(null);
   const [search, setSearch] = useState('');
   const [classFilter, setClassFilter] = useState('');
+  const [sportFilter, setSportFilter] = useState('');
   const [sort, setSort] = useState('recent');
   const [toDelete, setToDelete] = useState(null);
   const [toast, setToast] = useState(null);
@@ -60,15 +63,22 @@ export default function Dashboard({ onExpired, onLogout }) {
   const today = tunisDay(new Date());
   const todayCount = all.filter((r) => tunisDay(r.createdAt) === today).length;
   const foyerCount = all.filter((r) => r.chambre).length;
+  const bothCount = all.filter(SPORT_FILTERS['les-deux'].test).length;
+  const pingCount = all.filter(SPORT_FILTERS['ping-pong'].test).length;
+  const badCount = all.filter(SPORT_FILTERS.badminton.test).length;
 
   const visible = useMemo(
     () =>
       all
-        .filter((r) => (!classFilter || classKey(r.classe) === classFilter) && matchesSearch(r, search))
+        .filter((r) =>
+          (!classFilter || classKey(r.classe) === classFilter)
+          && (!sportFilter || SPORT_FILTERS[sportFilter].test(r))
+          && matchesSearch(r, search))
         .sort(SORTS[sort].fn),
-    [all, classFilter, search, sort],
+    [all, classFilter, sportFilter, search, sort],
   );
-  const filtered = Boolean(search || classFilter);
+  const filtered = Boolean(search || classFilter || sportFilter);
+  const activeSportLabel = SPORT_FILTERS[sportFilter]?.label;
   const activeClassLabel = classes.find((c) => c.key === classFilter)?.label;
 
   const exportCsv = () => {
@@ -76,7 +86,7 @@ export default function Dashboard({ onExpired, onLogout }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `inscrits-ping-pong-badminton-${today}${activeClassLabel ? `-${classKey(activeClassLabel)}` : ''}.csv`;
+    a.download = `inscrits-${sportFilter || 'ping-pong-badminton'}-${today}${activeClassLabel ? `-${classKey(activeClassLabel)}` : ''}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -146,6 +156,8 @@ export default function Dashboard({ onExpired, onLogout }) {
               <Stat icon={Users} label="Inscrits" value={all.length} />
               <Stat icon={CalendarCheck} label="Aujourd’hui" value={todayCount} />
               <Stat icon={BedDouble} label="Au foyer" value={foyerCount} />
+              <Stat icon={Disc} label="Ping Pong" value={pingCount} note={bothCount ? `dont ${bothCount} aux deux` : undefined} />
+              <Stat icon={Feather} label="Badminton" value={badCount} note={bothCount ? `dont ${bothCount} aux deux` : undefined} />
               <Stat
                 icon={Hourglass}
                 label={countdown.closed ? 'Inscriptions' : 'Clôture dans'}
@@ -198,7 +210,7 @@ export default function Dashboard({ onExpired, onLogout }) {
                   <Search size={18} aria-hidden="true" />
                   <span className="sr-only">Rechercher</span>
                   <input
-                    type="search" placeholder="Nom, prénom, téléphone, classe…" value={search}
+                    type="search" placeholder="Nom, téléphone, classe, sport…" value={search}
                     onChange={(e) => setSearch(e.target.value)} enterKeyHint="search"
                   />
                 </label>
@@ -208,6 +220,16 @@ export default function Dashboard({ onExpired, onLogout }) {
                   <select value={classFilter} onChange={(e) => setClassFilter(e.target.value)}>
                     <option value="">Toutes les classes</option>
                     {classes.map((c) => <option key={c.key} value={c.key}>{c.label} ({c.count})</option>)}
+                  </select>
+                </label>
+                <label className="toolbar__select">
+                  <Trophy size={16} aria-hidden="true" />
+                  <span className="sr-only">Filtrer par sport</span>
+                  <select value={sportFilter} onChange={(e) => setSportFilter(e.target.value)}>
+                    <option value="">Tous les sports</option>
+                    {Object.entries(SPORT_FILTERS).map(([k, f]) => (
+                      <option key={k} value={k}>{f.label} ({all.filter(f.test).length})</option>
+                    ))}
                   </select>
                 </label>
                 <label className="toolbar__select">
@@ -237,6 +259,11 @@ export default function Dashboard({ onExpired, onLogout }) {
                       Classe : {activeClassLabel} <X size={14} aria-label="Retirer le filtre" />
                     </button>
                   )}
+                  {activeSportLabel && (
+                    <button type="button" className="tag" onClick={() => setSportFilter('')}>
+                      {activeSportLabel} <X size={14} aria-label="Retirer le filtre" />
+                    </button>
+                  )}
                   {search && (
                     <button type="button" className="tag" onClick={() => setSearch('')}>
                       « {search} » <X size={14} aria-label="Effacer la recherche" />
@@ -250,7 +277,7 @@ export default function Dashboard({ onExpired, onLogout }) {
                   <Inbox size={34} aria-hidden="true" />
                   <p>{all.length === 0 ? 'Aucune inscription pour le moment.' : 'Aucun inscrit ne correspond à votre recherche.'}</p>
                   {filtered && (
-                    <button type="button" className="btn btn--small btn--ghost" onClick={() => { setSearch(''); setClassFilter(''); }}>
+                    <button type="button" className="btn btn--small btn--ghost" onClick={() => { setSearch(''); setClassFilter(''); setSportFilter(''); }}>
                       Réinitialiser les filtres
                     </button>
                   )}
@@ -267,6 +294,7 @@ export default function Dashboard({ onExpired, onLogout }) {
                           <th scope="col">Téléphone</th>
                           <th scope="col">Classe</th>
                           <th scope="col">Chambre</th>
+                          <th scope="col">Sport</th>
                           <th scope="col">Inscription</th>
                           <th scope="col"><span className="sr-only">Actions</span></th>
                         </tr>
@@ -280,6 +308,7 @@ export default function Dashboard({ onExpired, onLogout }) {
                             <td><a className="phone" href={`tel:${r.telephone.replace(/\s/g, '')}`}>{r.telephone}</a></td>
                             <td><span className="class-tag">{r.classe}</span></td>
                             <td>{r.chambre ? <span className="room-tag">{r.chambre}</span> : <span className="muted">Hors foyer</span>}</td>
+                            <td><SportTag sport={r.sport} /></td>
                             <td className="muted">{formatDateTime(r.createdAt)}</td>
                             <td className="actions">
                               <button type="button" className="icon-btn" onClick={() => setToDelete(r)} aria-label={`Supprimer l’inscription de ${r.prenom} ${r.nom}`}>
@@ -307,6 +336,7 @@ export default function Dashboard({ onExpired, onLogout }) {
                         <div className="reg-card__meta">
                           <span className="class-tag">{r.classe}</span>
                           {r.chambre ? <span className="room-tag"><BedDouble size={13} aria-hidden="true" /> {r.chambre}</span> : <span className="muted">Hors foyer</span>}
+                          <SportTag sport={r.sport} />
                           <span className="muted">{formatDateTime(r.createdAt)}</span>
                         </div>
                         <a className="reg-card__call" href={`tel:${r.telephone.replace(/\s/g, '')}`}>
@@ -322,21 +352,28 @@ export default function Dashboard({ onExpired, onLogout }) {
         )}
       </main>
 
-      <PrintSheet rows={[...visible].sort(SORTS.nom.fn)} classLabel={activeClassLabel} />
+      <PrintSheet rows={[...visible].sort(SORTS.nom.fn)} classLabel={activeClassLabel} sportLabel={activeSportLabel} />
       <ConfirmDelete row={toDelete} onClose={() => setToDelete(null)} onDeleted={removed} onExpired={onExpired} />
       {toast && <div className="toast" role="status">{toast}</div>}
     </>
   );
 }
 
-function Stat({ icon: Icon, label, value, tone }) {
+function Stat({ icon: Icon, label, value, tone, note }) {
   return (
     <div className={`stat card ${tone ? `stat--${tone}` : ''}`}>
       <span className="stat__icon" aria-hidden="true"><Icon size={18} /></span>
       <span className="stat__label">{label}</span>
       <span className="stat__value">{value}</span>
+      {note && <span className="stat__note">{note}</span>}
     </div>
   );
+}
+
+function SportTag({ sport }) {
+  return sport
+    ? <span className={`sport-tag sport-tag--${sport}`}>{sportText({ sport })}</span>
+    : <span className="muted">Non précisé</span>;
 }
 
 function ConfirmDelete({ row, onClose, onDeleted, onExpired }) {
@@ -403,22 +440,22 @@ function ConfirmDelete({ row, onClose, onDeleted, onExpired }) {
 }
 
 /** Version imprimable : liste d'appel avec colonne « Présent ». */
-function PrintSheet({ rows, classLabel }) {
+function PrintSheet({ rows, classLabel, sportLabel }) {
   return (
     <section className="print-sheet" aria-hidden="true">
       <h1>{EVENT.title} — {EVENT.dateLabel}</h1>
       <p>
-        {EVENT.organizer} · Liste des inscrits{classLabel ? ` — Classe ${classLabel}` : ''} · {rows.length} participant
+        {EVENT.organizer} · Liste des inscrits{sportLabel ? ` — ${sportLabel}` : ''}{classLabel ? ` — Classe ${classLabel}` : ''} · {rows.length} participant
         {rows.length > 1 ? 's' : ''} · Imprimé le {formatDateTime(new Date().toISOString())}
       </p>
       <table>
         <thead>
-          <tr><th>N°</th><th>Nom</th><th>Prénom</th><th>Téléphone</th><th>Classe</th><th>Chambre</th><th>Présent</th></tr>
+          <tr><th>N°</th><th>Nom</th><th>Prénom</th><th>Téléphone</th><th>Classe</th><th>Chambre</th><th>Sport</th><th>Présent</th></tr>
         </thead>
         <tbody>
           {rows.map((r, i) => (
             <tr key={r.id}>
-              <td>{i + 1}</td><td>{r.nom}</td><td>{r.prenom}</td><td>{r.telephone}</td><td>{r.classe}</td><td>{r.chambre || '—'}</td><td className="box">☐</td>
+              <td>{i + 1}</td><td>{r.nom}</td><td>{r.prenom}</td><td>{r.telephone}</td><td>{r.classe}</td><td>{r.chambre || '—'}</td><td>{sportText(r)}</td><td className="box">☐</td>
             </tr>
           ))}
         </tbody>

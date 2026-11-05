@@ -16,7 +16,7 @@ export default route(['GET', 'DELETE'], async (req, res) => {
   }
 
   const rows = await query(
-    `SELECT id, nom, prenom, telephone, classe, chambre, created_at FROM ${TABLE} ORDER BY created_at ASC, id ASC`,
+    `SELECT id, nom, prenom, telephone, classe, chambre, sport, created_at FROM ${TABLE} ORDER BY created_at ASC, id ASC`,
   );
   const registrations = rows.map((r) => ({
     id: r.id,
@@ -25,6 +25,7 @@ export default route(['GET', 'DELETE'], async (req, res) => {
     telephone: r.telephone,
     classe: r.classe,
     chambre: r.chambre,
+    sport: r.sport,
     createdAt: new Date(r.created_at).toISOString(),
   }));
   return send(res, 200, { ok: true, registrations, serverTime: new Date().toISOString() });
