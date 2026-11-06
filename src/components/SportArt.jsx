@@ -1,4 +1,4 @@
-// Illustrations vectorielles : raquette de ping-pong, volant, balle et terrain de badminton.
+// Illustrations vectorielles : raquette de ping-pong, volant, haltère, balle et terrain de badminton.
 import { useId } from 'react';
 
 export function Paddle({ className, ...rest }) {
@@ -67,6 +67,34 @@ export function Shuttlecock({ className }) {
       {/* bouchon */}
       <rect x="42" y="110" width="36" height="12" rx="3" fill="#f26b1d" />
       <path d="M42 120 h36 v4 a18 18 0 0 1 -36 0 Z" fill={`url(#${id('sc-cork')})`} />
+    </svg>
+  );
+}
+
+export function Dumbbell({ className }) {
+  const uid = useId().replace(/:/g, '');
+  const id = (n) => `${n}-${uid}`;
+  return (
+    <svg className={className} viewBox="0 0 200 90" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id={id('db-plate')} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#2f7df6" />
+          <stop offset="1" stopColor="#0d2470" />
+        </linearGradient>
+        <linearGradient id={id('db-bar')} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#e9eef8" />
+          <stop offset="0.5" stopColor="#9aa7c2" />
+          <stop offset="1" stopColor="#5b6783" />
+        </linearGradient>
+      </defs>
+      <rect x="40" y="38" width="120" height="14" rx="5" fill={`url(#${id('db-bar')})`} />
+      <rect x="6" y="30" width="14" height="30" rx="5" fill={`url(#${id('db-plate')})`} />
+      <rect x="18" y="10" width="24" height="70" rx="8" fill={`url(#${id('db-plate')})`} />
+      <rect x="158" y="10" width="24" height="70" rx="8" fill={`url(#${id('db-plate')})`} />
+      <rect x="180" y="30" width="14" height="30" rx="5" fill={`url(#${id('db-plate')})`} />
+      <rect x="22" y="16" width="5" height="58" rx="2.5" fill="#fff" opacity="0.35" />
+      <rect x="162" y="16" width="5" height="58" rx="2.5" fill="#fff" opacity="0.35" />
+      <rect x="84" y="36" width="32" height="18" rx="5" fill="#f26b1d" />
     </svg>
   );
 }

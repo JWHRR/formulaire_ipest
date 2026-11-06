@@ -235,6 +235,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .hero__art .hero__racket { width: 82px; position: absolute; left: 22px; bottom: 0; }
 .hero__art .hero__ball { width: 30px; right: 0; top: 0; }
 .hero__art .hero__shuttle { width: 56px; right: 8px; top: 40px; }
+.hero__art .hero__dumbbell { width: 64px; left: -34px; bottom: 6px; }
 .hero__ring {
   position: absolute; inset: 8% 4%; border-radius: 50%;
   border: 2px dashed rgba(255, 255, 255, 0.18);
@@ -254,6 +255,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   position: absolute; width: 26%; right: 4%; top: 30%;
   filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.4));
   animation: float 4.6s ease-in-out infinite;
+}
+.hero__dumbbell {
+  position: absolute; width: 30%; left: 0; bottom: 6%;
+  transform: rotate(-12deg);
+  filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.45));
 }
 @keyframes float { 0%, 100% { transform: rotate(28deg) translateY(0); } 50% { transform: rotate(18deg) translateY(-16px); } }
 @keyframes swing { 0%, 100% { transform: rotate(-24deg); } 50% { transform: rotate(-18deg) translateY(-6px); } }
@@ -511,7 +517,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .sport-option input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
 .sport-option__art { display: flex; align-items: flex-end; justify-content: center; gap: 2px; height: 52px; }
 .sport-option__paddle { height: 50px; width: auto; transform: rotate(-20deg); }
-.sport-option__shuttle { height: 40px; width: auto; transform: rotate(18deg); }
+.sport-option__shuttle { height: 44px; width: auto; transform: rotate(18deg); }
+.sport-option__dumbbell { width: 64px; height: auto; margin-bottom: 8px; transform: rotate(-14deg); }
+.sport-choice__hint { margin: -6px 0 2px; }
 .sport-option__label {
   font-family: var(--font-display); font-style: italic; font-weight: 800; text-transform: uppercase;
   font-size: 1.12rem; line-height: 1; color: var(--navy-900);
@@ -621,6 +629,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .hero__art .hero__racket { position: relative; left: auto; bottom: auto; width: 62%; margin: 0 auto; }
   .hero__art .hero__ball { width: 14%; right: 14%; top: 4%; }
   .hero__art .hero__shuttle { width: 26%; right: 2%; top: 32%; }
+  .hero__art .hero__dumbbell { width: 32%; left: 2%; bottom: 8%; }
   .section { padding: 96px 0; }
   .infos__grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: 40px; }
   .registration__grid { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 56px; }

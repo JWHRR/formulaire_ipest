@@ -151,7 +151,8 @@
   background: #ffe4e2; color: #a3141c;
 }
 .sport-tag--badminton { background: #e3f6ec; color: #0d6b44; }
-.sport-tag--les-deux { background: var(--navy-800); color: #fff; }
+.sport-tag--fitness { background: #efe7ff; color: #5b21b6; }
+.sport-tags { display: inline-flex; flex-wrap: wrap; gap: 4px; }
 .stat__note { font-size: 0.78rem; color: var(--muted); }
 .class-tag {
   display: inline-block; padding: 3px 10px; border-radius: 999px;

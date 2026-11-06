@@ -1,7 +1,7 @@
 import { ArrowDown, CalendarDays, ClipboardCheck, Clock, MapPin } from 'lucide-react';
 import { EVENT } from '../config.js';
 import Countdown from './Countdown.jsx';
-import { Ball, Court, Paddle, Shuttlecock } from './SportArt.jsx';
+import { Ball, Court, Dumbbell, Paddle, Shuttlecock } from './SportArt.jsx';
 
 export function scrollToForm(e) {
   e?.preventDefault();
@@ -30,6 +30,7 @@ export default function Hero({ countdown }) {
             <span className="hero__kicker">{EVENT.kicker}</span>
             <span className="hero__sport">{EVENT.sports[0]}</span>
             <span className="hero__sport hero__sport--alt">{EVENT.sports[1]}</span>
+            <span className="hero__sport hero__sport--alt">{EVENT.sports[2]}</span>
           </h1>
 
           <p className="slash-banner"><span>{EVENT.slogan}</span></p>
@@ -57,6 +58,7 @@ export default function Hero({ countdown }) {
           <Paddle className="hero__racket" />
           <Shuttlecock className="hero__shuttle" />
           <Ball className="hero__ball" />
+          <Dumbbell className="hero__dumbbell" />
         </div>
       </div>
     </section>

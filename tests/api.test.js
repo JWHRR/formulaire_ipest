@@ -15,6 +15,9 @@ await pg.query("INSERT INTO padel_registrations (nom) VALUES ('PADEL')");
 await pg.query(`CREATE TABLE sport_registrations (id SERIAL PRIMARY KEY, nom TEXT NOT NULL, prenom TEXT NOT NULL,
   telephone TEXT NOT NULL, classe TEXT NOT NULL, chambre TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now())`);
 await pg.query("INSERT INTO sport_registrations (nom, prenom, telephone, classe) VALUES ('EXISTANT', 'Ali', '+216 50 000 000', 'MP1')");
+// Inscription avec l'ancien choix « Les deux » (avant l'ajout du fitness).
+await pg.query('ALTER TABLE sport_registrations ADD COLUMN sport TEXT');
+await pg.query("INSERT INTO sport_registrations (nom, prenom, telephone, classe, sport) VALUES ('DEUX', 'Sami', '+216 50 000 001', 'MP1', 'les-deux')");
 
 const register = (await import('../api/register.js')).default;
 const login = (await import('../api/admin/login.js')).default;
@@ -35,7 +38,7 @@ async function call(handler, { method = 'GET', body, url = '/', cookie, ip = '1.
   return { status: res.statusCode, data: JSON.parse(res.raw), headers: res.headers };
 }
 
-const student = { sport: 'badminton', nom: 'ben salah', prenom: 'amine', telephone: '22 123 456', classe: 'Classe A', chambre: 'b12', horsFoyer: false, website: '' };
+const student = { sports: ['fitness', 'badminton'], nom: 'ben salah', prenom: 'amine', telephone: '22 123 456', classe: 'Classe A', chambre: 'b12', horsFoyer: false, website: '' };
 let cookie;
 
 before(async () => {
@@ -48,14 +51,15 @@ test('inscription valide → 201 et enregistrée (normalisée)', async () => {
   assert.equal(r.status, 201);
   assert.equal(r.data.ok, true);
   const rows = await globalThis.__IPEST_DEV_DB__.query('SELECT * FROM sport_registrations ORDER BY id');
-  assert.equal(rows.length, 2);
+  assert.equal(rows.length, 3);
   assert.equal(rows[0].nom, 'EXISTANT'); // inscription reçue avant l'ajout du sport : conservée
   assert.equal(rows[0].sport, null);
-  assert.equal(rows[1].nom, 'BEN SALAH');
-  assert.equal(rows[1].prenom, 'Amine');
-  assert.equal(rows[1].telephone, '+216 22 123 456');
-  assert.equal(rows[1].chambre, 'B12');
-  assert.equal(rows[1].sport, 'badminton');
+  assert.equal(rows[1].sport, 'ping-pong,badminton'); // ancien « Les deux » converti
+  assert.equal(rows[2].nom, 'BEN SALAH');
+  assert.equal(rows[2].prenom, 'Amine');
+  assert.equal(rows[2].telephone, '+216 22 123 456');
+  assert.equal(rows[2].chambre, 'B12');
+  assert.equal(rows[2].sport, 'badminton,fitness');
 });
 
 test('anciennes inscriptions (Dougga, padel) supprimées', async () => {
@@ -71,7 +75,7 @@ test('même numéro (autre format) → 409 doublon', async () => {
 });
 
 test('champs invalides → 400 avec erreurs par champ', async () => {
-  const r = await call(register, { method: 'POST', body: { ...student, classe: '', telephone: '123', sport: 'tennis' } });
+  const r = await call(register, { method: 'POST', body: { ...student, classe: '', telephone: '123', sports: ['tennis'] } });
   assert.equal(r.status, 400);
   assert.ok(r.data.fields.classe && r.data.fields.telephone && r.data.fields.sport);
 });
@@ -113,17 +117,17 @@ test('admin : liste puis suppression', async () => {
   await call(register, { method: 'POST', body: { ...student, prenom: 'Sarra', telephone: '98 765 432', chambre: '', horsFoyer: true } });
   const list = await call(registrations, { cookie });
   assert.equal(list.status, 200);
-  assert.equal(list.data.registrations.length, 3);
+  assert.equal(list.data.registrations.length, 4);
   assert.match(list.data.registrations[0].createdAt, /^\d{4}-\d\d-\d\dT/);
-  assert.deepEqual(list.data.registrations.map((r) => r.chambre), [null, 'B12', null]);
-  assert.deepEqual(list.data.registrations.map((r) => r.sport), [null, 'badminton', 'badminton']);
+  assert.deepEqual(list.data.registrations.map((r) => r.chambre), [null, null, 'B12', null]);
+  assert.deepEqual(list.data.registrations.map((r) => r.sport), [null, 'ping-pong,badminton', 'badminton,fitness', 'badminton,fitness']);
 
-  const id = list.data.registrations[2].id;
+  const id = list.data.registrations[3].id;
   const del = (q) => call(registrations, { method: 'DELETE', url: `/api/admin/registrations?id=${q}`, cookie });
   assert.equal((await del(id)).status, 200);
   assert.equal((await del(id)).status, 404);
   assert.equal((await del('abc')).status, 400);
-  assert.equal((await call(registrations, { cookie })).data.registrations.length, 2);
+  assert.equal((await call(registrations, { cookie })).data.registrations.length, 3);
 });
 
 test('admin : blocage après 8 mauvais mots de passe (par adresse IP)', async () => {

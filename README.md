@@ -1,6 +1,6 @@
-# IPEST — Inscription à la Journée Porte Ouverte Ping Pong et Badminton
+# IPEST — Inscription à la Journée Porte Ouverte Ping Pong, Badminton et Fitness
 
-Site d'inscription des étudiants de l'IPEST à la **Journée Porte Ouverte Ping Pong et Badminton** du **mercredi 11 novembre 2026** (l'après-midi, salle de sport de l'IPEST), géré par le Service Socio-Culturel, avec un **espace organisateur** (`/admin`) protégé par mot de passe.
+Site d'inscription des étudiants de l'IPEST à la **Journée Porte Ouverte Ping Pong, Badminton et Fitness** du **mercredi 11 novembre 2026** (l'après-midi, salle de sport de l'IPEST), géré par le Service Socio-Culturel, avec un **espace organisateur** (`/admin`) protégé par mot de passe.
 
 Les inscriptions ferment le **lundi 9 novembre 2026 à minuit** (heure de Tunis). Un compte à rebours est affiché sur le site. Après l'échéance, le formulaire se ferme, et le serveur refuse lui aussi toute nouvelle inscription.
 
@@ -11,7 +11,7 @@ Organisateur ─▶ /admin ─▶ /api/admin/* (session sécurisée) ─▶ mêm
 
 ## Fonctionnalités
 
-**Formulaire public.** Champs obligatoires : **Sport** (Ping Pong, Badminton ou Les deux), Nom, Prénom, Numéro de téléphone, Classe et **Numéro de chambre (foyer)**. Un étudiant non logé au foyer coche « Je ne suis pas logé(e) au foyer » à la place du numéro de chambre.
+**Formulaire public.** Champs obligatoires : **Sport(s)** (Ping Pong, Badminton, Fitness : un ou plusieurs), Nom, Prénom, Numéro de téléphone, Classe et **Numéro de chambre (foyer)**. Un étudiant non logé au foyer coche « Je ne suis pas logé(e) au foyer » à la place du numéro de chambre.
 
 - Les erreurs s'affichent en français, à la fois sur le téléphone et côté serveur.
 - Les numéros tunisiens sont acceptés avec ou sans `+216`, puis enregistrés au format `+216 XX XXX XXX`.
@@ -24,7 +24,7 @@ Organisateur ─▶ /admin ─▶ /api/admin/* (session sécurisée) ─▶ mêm
 
 - Chiffres clés : nombre d'inscrits, inscriptions du jour, nombre d'inscrits logés au foyer, temps restant avant la clôture.
 - Répartition par classe. Touchez une classe pour filtrer la liste.
-- Filtre par sport (les inscrits « Les deux » comptent dans chaque sport) et nombre de joueurs par sport.
+- Filtre par sport (un inscrit à plusieurs sports compte dans chacun) et nombre de joueurs par sport.
 - Recherche par nom, prénom, téléphone, classe, chambre ou sport, sans tenir compte des accents.
 - Tri : plus récentes, plus anciennes, par nom ou par classe.
 - Sur téléphone, les inscriptions s'affichent en cartes avec un bouton d'appel direct. Sur ordinateur, elles s'affichent en tableau.

@@ -6,9 +6,9 @@ export const EVENT = {
   organizer: 'Service Socio-Culturel de l’IPEST',
   institution: 'Institut Préparatoire aux Études Scientifiques et Techniques',
   institutionShort: 'IPEST',
-  title: 'Journée Porte Ouverte Ping Pong et Badminton',
+  title: 'Journée Porte Ouverte Ping Pong, Badminton et Fitness',
   kicker: 'Journée porte ouverte',
-  sports: ['Ping Pong', 'et Badminton'],
+  sports: ['Ping Pong', 'Badminton', 'et Fitness'],
   slogan: 'Jouez • Partagez • Dépassez-vous !',
   dateLabel: 'Mercredi 11 novembre 2026',
   timeLabel: 'L’après-midi',
@@ -23,13 +23,17 @@ export const PERKS = [
   { icon: 'key', label: 'Inscription obligatoire' },
 ];
 
-// Choix du sport dans le formulaire (valeur enregistrée → libellé affiché).
+// Sports proposés dans le formulaire (plusieurs choix possibles).
+// En base : valeurs séparées par des virgules, dans cet ordre (ex. « ping-pong,fitness »).
 export const SPORT_OPTIONS = [
   { value: 'ping-pong', label: 'Ping Pong' },
   { value: 'badminton', label: 'Badminton' },
-  { value: 'les-deux', label: 'Les deux' },
+  { value: 'fitness', label: 'Fitness' },
 ];
-export const sportLabel = (value) => SPORT_OPTIONS.find((o) => o.value === value)?.label ?? '';
+export const parseSports = (stored) =>
+  SPORT_OPTIONS.map((o) => o.value).filter((v) => String(stored ?? '').split(',').includes(v));
+export const sportsLabel = (stored) =>
+  parseSports(stored).map((v) => SPORT_OPTIONS.find((o) => o.value === v).label).join(', ');
 
 // Affiche officielle (dans /public).
 export const POSTER_SRC = '/affiche-ping-pong-badminton.jpg';

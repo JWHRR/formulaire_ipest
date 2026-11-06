@@ -24,6 +24,8 @@ const SCHEMA = [
   // Choix du sport, ajouté après l'ouverture des inscriptions : les inscriptions
   // déjà reçues sont conservées (sport vide = non précisé).
   `ALTER TABLE ${TABLE} ADD COLUMN IF NOT EXISTS sport TEXT`,
+  // Ancien choix « Les deux » (avant l'ajout du fitness) = ping-pong + badminton.
+  `UPDATE ${TABLE} SET sport = 'ping-pong,badminton' WHERE sport = 'les-deux'`,
   `CREATE UNIQUE INDEX IF NOT EXISTS ${TABLE}_telephone_key ON ${TABLE} (telephone)`,
   `CREATE TABLE IF NOT EXISTS admin_login_attempts (
      id SERIAL PRIMARY KEY,

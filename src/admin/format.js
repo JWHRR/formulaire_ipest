@@ -1,5 +1,5 @@
 // Outils de présentation des inscriptions (purs, testés dans tests/).
-import { sportLabel } from '../config.js';
+import { SPORT_OPTIONS, parseSports, sportsLabel } from '../config.js';
 
 const TZ = 'Africa/Tunis';
 const dayFmt = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -33,19 +33,17 @@ export function groupByClass(rows) {
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'fr', { numeric: true }));
 }
 
-/** Filtre par sport : « ping-pong » et « badminton » incluent les inscrits aux deux. */
-export const SPORT_FILTERS = {
-  'ping-pong': { label: 'Joueurs de ping-pong', test: (r) => r.sport === 'ping-pong' || r.sport === 'les-deux' },
-  badminton: { label: 'Joueurs de badminton', test: (r) => r.sport === 'badminton' || r.sport === 'les-deux' },
-  'les-deux': { label: 'Inscrits aux deux', test: (r) => r.sport === 'les-deux' },
-};
-export const sportText = (r) => sportLabel(r.sport) || 'Non précisé';
+/** Filtre par sport : un inscrit à plusieurs sports apparaît dans chacun. */
+export const SPORT_FILTERS = Object.fromEntries(
+  SPORT_OPTIONS.map((o) => [o.value, { label: o.label, test: (r) => parseSports(r.sport).includes(o.value) }]),
+);
+export const sportText = (r) => sportsLabel(r.sport) || 'Non précisé';
 
 export function matchesSearch(r, q) {
   const query = fold(q).trim();
   if (!query) return true;
   const digits = query.replace(/\D/g, '');
-  const hay = fold(`${r.nom} ${r.prenom} ${r.prenom} ${r.nom} ${r.classe} ${r.telephone} ${r.chambre ?? ''} ${sportLabel(r.sport)}`);
+  const hay = fold(`${r.nom} ${r.prenom} ${r.prenom} ${r.nom} ${r.classe} ${r.telephone} ${r.chambre ?? ''} ${sportsLabel(r.sport)}`);
   if (query.split(/\s+/).every((word) => hay.includes(word))) return true;
   return digits.length >= 3 && r.telephone.replace(/\D/g, '').includes(digits);
 }

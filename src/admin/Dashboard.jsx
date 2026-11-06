@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowUpDown, BedDouble, CalendarCheck, CircleAlert, Disc, Download, ExternalLink, Feather, Filter, Hourglass, Inbox,
+  ArrowUpDown, BedDouble, CircleAlert, Disc, Download, Dumbbell, ExternalLink, Feather, Filter, Hourglass, Inbox,
   LoaderCircle, LogOut, Phone, Printer, RefreshCw, Search, Trash2, Trophy, Users, X,
 } from 'lucide-react';
-import { DEADLINE_ISO, EVENT, LOGO_SRC } from '../config.js';
+import { DEADLINE_ISO, EVENT, LOGO_SRC, SPORT_OPTIONS, parseSports } from '../config.js';
 import { useCountdown } from '../lib/useCountdown.js';
 import { api } from './api.js';
 import {
@@ -63,9 +63,7 @@ export default function Dashboard({ onExpired, onLogout }) {
   const today = tunisDay(new Date());
   const todayCount = all.filter((r) => tunisDay(r.createdAt) === today).length;
   const foyerCount = all.filter((r) => r.chambre).length;
-  const bothCount = all.filter(SPORT_FILTERS['les-deux'].test).length;
-  const pingCount = all.filter(SPORT_FILTERS['ping-pong'].test).length;
-  const badCount = all.filter(SPORT_FILTERS.badminton.test).length;
+  const sportCount = (k) => all.filter(SPORT_FILTERS[k].test).length;
 
   const visible = useMemo(
     () =>
@@ -86,7 +84,7 @@ export default function Dashboard({ onExpired, onLogout }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `inscrits-${sportFilter || 'ping-pong-badminton'}-${today}${activeClassLabel ? `-${classKey(activeClassLabel)}` : ''}.csv`;
+    a.download = `inscrits-${sportFilter || 'porte-ouverte'}-${today}${activeClassLabel ? `-${classKey(activeClassLabel)}` : ''}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -153,11 +151,11 @@ export default function Dashboard({ onExpired, onLogout }) {
         ) : rows !== null && (
           <>
             <section className="stats" aria-label="Chiffres clés">
-              <Stat icon={Users} label="Inscrits" value={all.length} />
-              <Stat icon={CalendarCheck} label="Aujourd’hui" value={todayCount} />
+              <Stat icon={Users} label="Inscrits" value={all.length} note={`dont ${todayCount} aujourd’hui`} />
+              <Stat icon={Disc} label="Ping Pong" value={sportCount('ping-pong')} />
+              <Stat icon={Feather} label="Badminton" value={sportCount('badminton')} />
+              <Stat icon={Dumbbell} label="Fitness" value={sportCount('fitness')} />
               <Stat icon={BedDouble} label="Au foyer" value={foyerCount} />
-              <Stat icon={Disc} label="Ping Pong" value={pingCount} note={bothCount ? `dont ${bothCount} aux deux` : undefined} />
-              <Stat icon={Feather} label="Badminton" value={badCount} note={bothCount ? `dont ${bothCount} aux deux` : undefined} />
               <Stat
                 icon={Hourglass}
                 label={countdown.closed ? 'Inscriptions' : 'Clôture dans'}
@@ -228,7 +226,7 @@ export default function Dashboard({ onExpired, onLogout }) {
                   <select value={sportFilter} onChange={(e) => setSportFilter(e.target.value)}>
                     <option value="">Tous les sports</option>
                     {Object.entries(SPORT_FILTERS).map(([k, f]) => (
-                      <option key={k} value={k}>{f.label} ({all.filter(f.test).length})</option>
+                      <option key={k} value={k}>{f.label} ({sportCount(k)})</option>
                     ))}
                   </select>
                 </label>
@@ -261,7 +259,7 @@ export default function Dashboard({ onExpired, onLogout }) {
                   )}
                   {activeSportLabel && (
                     <button type="button" className="tag" onClick={() => setSportFilter('')}>
-                      {activeSportLabel} <X size={14} aria-label="Retirer le filtre" />
+                      Sport : {activeSportLabel} <X size={14} aria-label="Retirer le filtre" />
                     </button>
                   )}
                   {search && (
@@ -371,9 +369,15 @@ function Stat({ icon: Icon, label, value, tone, note }) {
 }
 
 function SportTag({ sport }) {
-  return sport
-    ? <span className={`sport-tag sport-tag--${sport}`}>{sportText({ sport })}</span>
-    : <span className="muted">Non précisé</span>;
+  const sports = parseSports(sport);
+  if (!sports.length) return <span className="muted">Non précisé</span>;
+  return (
+    <span className="sport-tags">
+      {sports.map((s) => (
+        <span key={s} className={`sport-tag sport-tag--${s}`}>{SPORT_OPTIONS.find((o) => o.value === s).label}</span>
+      ))}
+    </span>
+  );
 }
 
 function ConfirmDelete({ row, onClose, onDeleted, onExpired }) {

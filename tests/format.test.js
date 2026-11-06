@@ -28,13 +28,14 @@ test('CSV : BOM, séparateur ;, téléphone en texte, injection neutralisée', (
   assert.ok(csv.startsWith('﻿N°;Nom;Prénom;Téléphone;Classe;Chambre (foyer);Sport;'));
   const line = csv.split('\r\n')[1];
   assert.equal(line, `1;"BEN; SALAH";Amine;"=""+216 22 123 456""";'=CMD();Hors foyer;Non précisé;09/10/2026 à 11:00`);
-  assert.ok(toCsv([{ ...r(2, 'X', 'Y', 'PC'), chambre: 'B12', sport: 'les-deux' }]).includes(';PC;B12;Les deux;'));
+  assert.ok(toCsv([{ ...r(2, 'X', 'Y', 'PC'), chambre: 'B12', sport: 'badminton,fitness' }]).includes(';PC;B12;Badminton, Fitness;'));
 });
 
-test('filtres par sport : les inscrits aux deux comptent dans chaque sport', () => {
-  const rows = ['ping-pong', 'badminton', 'les-deux', null].map((sport, i) => ({ ...r(i + 1, 'A', 'b', 'PC'), sport }));
+test('filtres par sport : un inscrit à plusieurs sports compte dans chacun', () => {
+  const rows = ['ping-pong', 'badminton,fitness', 'ping-pong,badminton,fitness', null].map((sport, i) => ({ ...r(i + 1, 'A', 'b', 'PC'), sport }));
   assert.deepEqual(rows.filter(SPORT_FILTERS['ping-pong'].test).map((x) => x.id), [1, 3]);
   assert.deepEqual(rows.filter(SPORT_FILTERS.badminton.test).map((x) => x.id), [2, 3]);
-  assert.deepEqual(rows.filter(SPORT_FILTERS['les-deux'].test).map((x) => x.id), [3]);
-  assert.ok(matchesSearch(rows[1], 'badminton'));
+  assert.deepEqual(rows.filter(SPORT_FILTERS.fitness.test).map((x) => x.id), [2, 3]);
+  assert.ok(matchesSearch(rows[1], 'fitness'));
+  assert.ok(!matchesSearch(rows[0], 'fitness'));
 });

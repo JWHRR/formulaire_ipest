@@ -56,11 +56,16 @@ function roomError(value, horsFoyer) {
   return undefined;
 }
 
-function sportError(value) {
-  if (!value) return 'Veuillez choisir votre sport : ping-pong, badminton ou les deux.';
-  if (!SPORT_OPTIONS.some((o) => o.value === value)) return 'Sport invalide.';
+const SPORT_VALUES = SPORT_OPTIONS.map((o) => o.value);
+
+function sportError(sports) {
+  if (!Array.isArray(sports) || !sports.length) return 'Veuillez choisir au moins un sport : ping-pong, badminton ou fitness.';
+  if (!sports.every((s) => SPORT_VALUES.includes(s))) return 'Sport invalide.';
   return undefined;
 }
+
+/** Sports choisis, sans doublon, dans l'ordre de SPORT_OPTIONS (« ping-pong,fitness »). */
+export const formatSports = (sports) => SPORT_VALUES.filter((v) => sports.includes(v)).join(',');
 
 /** Chambre en majuscules (« b12 » → « B12 ») ; null = étudiant non logé au foyer. */
 export const formatChambre = (s, horsFoyer) => (horsFoyer ? null : collapse(s).toLocaleUpperCase('fr'));
@@ -69,9 +74,9 @@ export const formatChambre = (s, horsFoyer) => (horsFoyer ? null : collapse(s).t
 export const formatClasse = (s) => collapse(s).toLocaleUpperCase('fr');
 
 /** Validation des champs, une fois la classe déterminée. */
-export function validateFields({ sport, nom, prenom, telephone, classe, chambre, horsFoyer }) {
+export function validateFields({ sports, nom, prenom, telephone, classe, chambre, horsFoyer }) {
   const errors = {};
-  const e0 = sportError(sport);
+  const e0 = sportError(sports);
   if (e0) errors.sport = e0;
   const e1 = nameError(nom, 'nom');
   const e2 = nameError(prenom, 'prénom');
@@ -110,7 +115,7 @@ export function validateRegistration(values) {
 
 export function buildPayload(values) {
   return {
-    sport: values.sport,
+    sports: values.sports,
     nom: collapse(values.nom),
     prenom: collapse(values.prenom),
     telephone: values.telephone,
@@ -128,14 +133,14 @@ export function sanitizeRegistration(body) {
   const input = body && typeof body === 'object' ? body : {};
   const str = (k) => (typeof input[k] === 'string' ? input[k] : '');
   const raw = {
-    sport: str('sport'), nom: str('nom'), prenom: str('prenom'), telephone: str('telephone'), classe: str('classe'),
+    sports: Array.isArray(input.sports) ? input.sports : [], nom: str('nom'), prenom: str('prenom'), telephone: str('telephone'), classe: str('classe'),
     chambre: str('chambre'), horsFoyer: input.horsFoyer === true,
   };
   const errors = validateFields(raw);
   if (Object.keys(errors).length) return { errors };
   return {
     data: {
-      sport: raw.sport,
+      sport: formatSports(raw.sports),
       nom: formatNom(raw.nom),
       prenom: formatPrenom(raw.prenom),
       telephone: normalizeTunisianPhone(raw.telephone),
