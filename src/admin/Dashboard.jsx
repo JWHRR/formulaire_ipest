@@ -158,8 +158,8 @@ export default function Dashboard({ onExpired, onLogout }) {
               <Stat icon={BedDouble} label="Au foyer" value={foyerCount} />
               <Stat
                 icon={Hourglass}
-                label={countdown.closed ? 'Inscriptions' : 'Clôture dans'}
-                value={countdown.closed ? 'Closes' : countdown.days > 0 ? `${countdown.days} j ${countdown.hours} h` : `${countdown.hours} h ${countdown.minutes} min`}
+                label={countdown.closed ? 'Compte à rebours' : 'Fin du compte à rebours'}
+                value={countdown.closed ? 'Terminé' : countdown.days > 0 ? `${countdown.days} j ${countdown.hours} h` : `${countdown.hours} h ${countdown.minutes} min`}
                 tone={countdown.closed ? 'muted' : undefined}
               />
             </section>

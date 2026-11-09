@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import {
-  BedDouble, CircleAlert, CircleCheckBig, GraduationCap, IdCard, LoaderCircle, Lock, Phone, RefreshCw, Send, User,
+  BedDouble, CircleAlert, CircleCheckBig, GraduationCap, IdCard, LoaderCircle, Phone, RefreshCw, Send, User,
 } from 'lucide-react';
 import { CLASS_OPTIONS, EVENT, SPORT_OPTIONS } from '../config.js';
 import { OTHER_CLASS, buildPayload, normalizeTunisianPhone, validateRegistration } from '../lib/validation.js';
@@ -59,7 +59,7 @@ export default function Registration({ countdown }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (submittingRef.current || countdown.closed) return;
+    if (submittingRef.current) return;
 
     const found = validateRegistration(values);
     setErrors(found);
@@ -131,12 +131,6 @@ export default function Registration({ countdown }) {
                 Rendez-vous le {EVENT.dateLabel.toLowerCase()} {EVENT.venueIn} !
               </p>
               <button type="button" className="btn btn--ghost" onClick={reset}>Inscrire une autre personne</button>
-            </div>
-          ) : countdown.closed ? (
-            <div className="closed">
-              <span className="closed__icon" aria-hidden="true"><Lock size={32} /></span>
-              <h3>Inscriptions closes</h3>
-              <p>La période d’inscription à la {EVENT.title} est terminée. Merci de votre intérêt.</p>
             </div>
           ) : (
             <form ref={formRef} className="form" onSubmit={handleSubmit} noValidate aria-busy={submitting}>

@@ -2,7 +2,7 @@
 
 Site d'inscription des étudiants de l'IPEST à la **Journée Porte Ouverte Ping Pong, Badminton et Fitness** du **mercredi 11 novembre 2026** (l'après-midi, salle de sport de l'IPEST), géré par le Service Socio-Culturel, avec un **espace organisateur** (`/admin`) protégé par mot de passe.
 
-Les inscriptions ferment le **lundi 9 novembre 2026 à minuit** (heure de Tunis). Un compte à rebours est affiché sur le site. Après l'échéance, le formulaire se ferme, et le serveur refuse lui aussi toute nouvelle inscription.
+Un compte à rebours jusqu'au **mardi 10 novembre 2026 à minuit** (heure de Tunis) incite à s'inscrire vite. Il ne ferme rien : le formulaire reste ouvert après cette date.
 
 ```
 Étudiant ─▶ site (React) ─▶ /api/register (fonction Vercel) ─▶ base PostgreSQL (Neon)
@@ -88,7 +88,7 @@ Les inscriptions des anciens événements (sortie Dougga & Testour, table `regis
 
 | Besoin | Où |
 |---|---|
-| Changer la date limite | `DEADLINE_ISO` et `DEADLINE_LABEL` dans `src/config.js` (utilisés par le site **et** l'API) |
+| Changer la fin du compte à rebours | `DEADLINE_ISO` et `DEADLINE_LABEL` dans `src/config.js` |
 | Proposer une liste de classes (menu déroulant) | `CLASS_OPTIONS` dans `src/config.js`. L'option « Autre » reste disponible |
 | Ajouter le logo officiel | Placez le fichier dans `public/`, puis définissez `LOGO_SRC` dans `src/config.js` |
 | Changer le mot de passe organisateur | Modifiez `ADMIN_PASSWORD` sur Vercel, puis faites un Redeploy. Les sessions ouvertes sont fermées |

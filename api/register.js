@@ -1,14 +1,9 @@
 // POST /api/register — enregistre une inscription.
-import { DEADLINE_ISO, DEADLINE_LABEL } from '../src/config.js';
 import { sanitizeRegistration } from '../src/lib/validation.js';
 import { TABLE, query } from '../server/db.js';
 import { readJson, route, send } from '../server/http.js';
 
 export default route(['POST'], async (req, res) => {
-  if (Date.now() >= new Date(DEADLINE_ISO).getTime()) {
-    return send(res, 403, { ok: false, code: 'closed', error: `Les inscriptions sont closes depuis le ${DEADLINE_LABEL.toLowerCase()}.` });
-  }
-
   const body = await readJson(req);
   if (body.website) return send(res, 400, { ok: false, code: 'rejected', error: 'Soumission refusée.' });
 

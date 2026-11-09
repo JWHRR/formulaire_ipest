@@ -38,11 +38,11 @@ export const sportsLabel = (stored) =>
 // Affiche officielle (dans /public).
 export const POSTER_SRC = '/affiche-ping-pong-badminton.jpg';
 
-// Clôture des inscriptions : lundi 9 novembre 2026 à minuit (heure de Tunis, UTC+1).
-// « Minuit le 9 » = fin de la journée du 9, soit le 10 novembre à 00:00.
-// Appliquée à la fois sur le site et par l'API.
-export const DEADLINE_ISO = '2026-11-10T00:00:00+01:00';
-export const DEADLINE_LABEL = 'Lundi 9 novembre 2026 à minuit';
+// Fin du compte à rebours : mardi 10 novembre 2026 à minuit (heure de Tunis, UTC+1).
+// « Minuit le 10 » = fin de la journée du 10, soit le 11 novembre à 00:00.
+// Simple incitation à s'inscrire vite : les inscriptions restent ouvertes après cette date.
+export const DEADLINE_ISO = '2026-11-11T00:00:00+01:00';
+export const DEADLINE_LABEL = 'Mardi 10 novembre 2026 à minuit';
 
 // Liste des classes proposées dans un menu déroulant.
 // Vide : le champ « Classe » est une saisie libre.

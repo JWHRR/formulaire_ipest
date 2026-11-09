@@ -93,11 +93,14 @@ test('JSON invalide → 400 ; GET → 405', async () => {
   assert.equal((await call(register, { method: 'GET' })).status, 405);
 });
 
-test('après la date limite → 403 closes', async (t) => {
-  t.mock.method(Date, 'now', () => new Date('2026-11-10T00:00:01+01:00').getTime());
+test('après la fin du compte à rebours : inscriptions toujours ouvertes', async (t) => {
+  // Base simulée : PGlite ne supporte pas un saut d'horloge.
+  const realDb = globalThis.__IPEST_DEV_DB__;
+  globalThis.__IPEST_DEV_DB__ = { query: async () => [{ id: 99, created_at: new Date('2026-11-11T00:00:01+01:00') }] };
+  t.after(() => { globalThis.__IPEST_DEV_DB__ = realDb; });
+  t.mock.method(Date, 'now', () => new Date('2026-11-11T00:00:01+01:00').getTime());
   const r = await call(register, { method: 'POST', body: { ...student, telephone: '55 111 222' } });
-  assert.equal(r.status, 403);
-  assert.equal(r.data.code, 'closed');
+  assert.equal(r.status, 201);
 });
 
 test('admin : accès refusé sans session valide', async () => {

@@ -1,4 +1,4 @@
-import { Hourglass, Lock } from 'lucide-react';
+import { Hourglass } from 'lucide-react';
 import { DEADLINE_LABEL } from '../config.js';
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -9,8 +9,8 @@ export default function Countdown({ countdown, variant = 'light' }) {
   if (closed) {
     return (
       <div className={`countdown countdown--${variant} countdown--closed`} role="status">
-        <Lock size={18} aria-hidden="true" />
-        <span>Les inscriptions sont closes depuis le {DEADLINE_LABEL.charAt(0).toLowerCase() + DEADLINE_LABEL.slice(1)}.</span>
+        <Hourglass size={18} aria-hidden="true" />
+        <span>Inscrivez-vous vite !</span>
       </div>
     );
   }

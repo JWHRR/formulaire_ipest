@@ -11,7 +11,7 @@ export class SubmissionError extends Error {
   }
 }
 
-const FINAL_CODES = new Set(['closed', 'duplicate', 'invalid']);
+const FINAL_CODES = new Set(['duplicate', 'invalid']);
 
 export async function submitRegistration(payload, { endpoint = '/api/register', fetchImpl = fetch, timeoutMs = 20000 } = {}) {
   const controller = new AbortController();
